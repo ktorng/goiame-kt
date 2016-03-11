@@ -25,3 +25,4 @@ jagi:astronomy-validators
 twbs:bootstrap
 fortawesome:fontawesome
 momentjs:moment
+erasaur:meteor-lodash
