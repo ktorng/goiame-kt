@@ -18,3 +18,10 @@ ecmascript              # Enable ECMAScript2015+ syntax in app code
 
 autopublish             # Publish all data to the clients (for prototyping)
 insecure                # Allow all DB writes from clients (for prototyping)
+aldeed:collection2
+kadira:flow-router
+jagi:astronomy
+jagi:astronomy-validators
+twbs:bootstrap
+fortawesome:fontawesome
+momentjs:moment
