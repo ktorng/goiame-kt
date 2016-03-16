@@ -1,3 +1,5 @@
+// generation functions can be used to have a more predefined and predictable game, trading randomized stats for more consistency
+
 Meteor.methods({
   'Database.seed': function() {
     var monsters = [
@@ -14,7 +16,7 @@ Meteor.methods({
         createdAt: new Date(),
       });
 
-      monster.generateStats();
+      // monster.generateStats();
 
       if (monster.validate()) {
         monster.save();
@@ -35,7 +37,7 @@ Meteor.methods({
         createdAt: new Date(),
       });
 
-      location.generateAttributes();
+      // location.generateAttributes();
 
       if (location.validate()) {
         location.save();
@@ -56,7 +58,7 @@ Meteor.methods({
         createdAt: new Date(),
       });
 
-      item.generateAttributes();
+      // item.generateAttributes();
 
       if (item.validate()) {
         item.save();
