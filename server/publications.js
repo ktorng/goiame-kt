@@ -1,3 +1,7 @@
-Meteor.publish('players.all', function() {
-  return Players.find();
+Meteor.publish('players', function(gameId) {
+  return Players.find({"gameId": gameId});
+});
+
+Meteor.publish('games', function(accessCode) {
+  return Games.find({"accessCode": accessCode});
 });
