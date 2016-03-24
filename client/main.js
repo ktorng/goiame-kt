@@ -48,6 +48,10 @@ function getCurrentGame() {
 }
 
 function resetUserState() {
+  var player = getCurrentPlayer();
+  if(player) {
+    Players.remove(player._id);
+  }
   Session.set("gameID", null);
   Session.set("playerID", null);
 }
@@ -80,9 +84,44 @@ function trackGameState() {
   }
 }
 
+function leaveGame() {
+  //GAnalystics.event("game-actions", "gameLeave");
+  var player = getCurrentPlayer();
+  Session.set("currentView", "startMenu");
+  Players.remove(player._id);
+  Session.set("playerID", null);
+}
 
+function hasHistoryApi() {
+  return !!(window.history && window.history.pushState);
+}
+
+Meteor.setInterval(function() {
+  Session.set('time', new Date());
+}, 1000);
+
+if(hasHistoryApi()) {
+  function trackUrlState() {
+    var accessCode = null
+    var game = getCurrentGame();
+    if(game) {
+      accessCode = game.accessCode;
+    } else {
+      accessCode = Session.get('urlAccessCode');
+    }
+
+    var currentURL = '/';
+    if(accessCode) {
+      currentURL += accessCode + '/';
+    }
+    window.history.pushState(null, null, currentURL);
+  }
+  Tracker.autorun(trackUrlState);
+}
 Tracker.autorun(trackGameState);
 
+window.onbeforeunload = resetUserState;
+window.onpagehide = resetUserState;
 
 Template.main.helpers({
   whichView: function(){
@@ -116,18 +155,19 @@ Template.createGame.events({
 
     game = generateNewGame();
     player = generateNewPlayer(game, playerName);
-    console.log('game and plyaer generated');
+    console.log('game and player generated');
 
     Meteor.subscribe('games', game.accessCode);
-    Meteor.subscribe('players', game._id)
-    console.log('subscribed');
-
-    Session.set("gameID", game._id);
-    console.log(Session.get('gameID'));
-    Session.set("playerID", player._id);
-    console.log(Session.get('playerID'));
-    //Session.set("loading", true);
-
+    Session.set("loading", true);
+      
+    Meteor.subscribe('players', game._id, function() {
+      console.log('subscribed');
+      Session.set("loading", false);
+      Session.set("gameID", game._id);
+      console.log(Session.get('gameID'));
+      Session.set("playerID", player._id);
+      console.log(Session.get('playerID'));
+    });
   },
   'click .btn-back': function(){
     Session.set("currentView", "startMenu");
@@ -138,5 +178,60 @@ Template.createGame.events({
 Template.createGame.helpers({
   isLoading: function(){
     return Session.get('loading');
+  }
+});
+
+Template.lobby.helpers({
+  game: function() {
+    return getCurrentGame();
+  },
+  accessLink: function() {
+    return getAccessLink();
+  },
+  player: function() {
+    return getCurrentPlayer();
+  },
+  players: function() {
+    var game = getCurrentGame();
+    var currentPlayer = getCurrentPlayer();
+
+    if(!game) {
+      return null;
+    }
+    
+    var players = Players.find({'gameID': game._id}, {'sort': {'createdAt': 1}}).fetch();
+
+    players.forEach(function(player){
+      if(player._id === currentPlayer._id){
+        player.isCurrent = true;
+      }
+    });
+
+    return players;
+  },
+  isLoading: function(){
+    var game = getCurrentGame();
+    return game.state === 'settingUp';
+  }
+});
+
+
+Template.lobby.events({
+  'click .btn-leave': leaveGame,
+  'click .btn-start': function() {
+    //GAnalytics.event("game-actions", "gamestart");
+
+    var game = getCurrentGame();
+    Games.update(game._id, {$set: {state: 'settingUp'}});
+  },
+  'click .btn-remove-player': function() {
+    var playerID = $(event.currentTarget).data('player-id');
+    Players.remove(playerID);
+  },
+  'click .btn-edit-player': function() {
+    var game = getCurrentGame();
+    resetUserState();
+    Session.set('urlAccessCode', game.accessCode);
+    Session.set('currentView', 'joinGame');
   }
 });
