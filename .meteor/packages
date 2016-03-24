@@ -26,3 +26,4 @@ momentjs:moment
 erasaur:meteor-lodash
 insecure
 kadira:blaze-layout
+mrt:flash-messages

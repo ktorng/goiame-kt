@@ -125,6 +125,33 @@
   </div>
 </template>
 
+<template name="joinGame">
+  <h4>
+    {{#if isLoading}}
+      <span class="spinner"></span>
+    {{else}}
+      welcome to goiame
+    {{/if}}
+  </h4>
+
+  <hr>
+
+  <form id="join-game">
+    <div>
+      <input autocorrect="off" autocapitalize="off" type="text" id="access-code" name="accessCode" placeholder="enter an access code">
+      <input type="text" id="player-name" name="playerName" placeholder="enter your name">
+
+      {{> flashMessages}}
+
+      <div class="button-container">
+        <input type="submit" value="join">
+        <button class="btn-back">back</button>
+      </div>
+    </div>
+  </form>
+</template>
+
+
 <!--
 <template name="gameView">
 <h4><a class="game-countdown {{#if gameFinished }}finished{{/if}} {{#if game.paused }}paused{{/if}}">{{{ timeRemaining }}}</a></h4>
