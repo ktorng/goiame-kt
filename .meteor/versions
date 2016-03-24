@@ -42,6 +42,7 @@ jagi:astronomy@1.2.10
 jagi:astronomy-validators@1.1.2
 jagi:reactive-map@2.0.0
 jquery@1.11.4
+kadira:blaze-layout@2.3.0
 kadira:flow-router@2.10.1
 launch-screen@1.0.4
 livedata@1.0.15

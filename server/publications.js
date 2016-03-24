@@ -1,5 +1,5 @@
-Meteor.publish('players', function(gameId) {
-  return Players.find({"gameId": gameId});
+Meteor.publish('players', function(gameID) {
+  return Players.find({"gameID": gameID});
 });
 
 Meteor.publish('games', function(accessCode) {
