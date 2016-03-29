@@ -1,4 +1,4 @@
-function generateAccessCode(){
+generateAccessCode = function() {
   var code = "";
   var possible = "abcdefghijklmnopqrstuvwxyz";
   
@@ -8,7 +8,7 @@ function generateAccessCode(){
   return code;
 }
 
-function generateNewGame(){
+generateNewGame = function() {
     var game = {
       accessCode: generateAccessCode(),
       state: "waitingForPlayers",
@@ -19,7 +19,7 @@ function generateNewGame(){
     return Games.findOne(gameID);
 }
 
-function generateNewPlayer(game, name){
+generateNewPlayer = function(game, name) {
     var player = {
       gameID: game._id,
       name: name,
@@ -29,7 +29,7 @@ function generateNewPlayer(game, name){
     return Players.findOne(playerID);
 }
 
-function getCurrentPlayer() {
+getCurrentPlayer = function() {
   var playerID = Session.get("playerID");
 
   if(playerID) {
@@ -37,7 +37,7 @@ function getCurrentPlayer() {
   }
 }
 
-function getCurrentGame() {
+getCurrentGame = function() {
   var gameID = Session.get("gameID");
 
   if(gameID) {
@@ -45,7 +45,7 @@ function getCurrentGame() {
   }
 }
 
-function resetUserState() {
+resetUserState = function() {
   var player = getCurrentPlayer();
   if(player) {
     Players.remove(player._id);
@@ -54,7 +54,7 @@ function resetUserState() {
   Session.set("playerID", null);
 }
 
-function trackGameState() {
+trackGameState = function() {
   var gameID = Session.get("gameID");
   var playerID = Session.get("playerID");
 
@@ -83,7 +83,7 @@ function trackGameState() {
   }
 }
 
-function leaveGame() {
+leaveGame = function() {
   //GAnalystics.event("game-actions", "gameLeave");
   var player = getCurrentPlayer();
   Session.set("currentView", "startMenu");
@@ -301,23 +301,4 @@ Template.lobby.events({
     Session.set('urlAccessCode', game.accessCode);
     BlazeLayout.render("main", { content: "joinGame" });
   }
-});
-
-Template.gameView.onRendered(function() {
-  var game = getCurrentGame();
-  var player = getCurrentPlayer();
-});
-
-Template.gameView.helpers({
-  game: function() {
-    return getCurrentGame();
-  },
-  player: function() {
-    return getCurrentPlayer();
-  },
-  players: function() {
-    var game = getCurrentGame();
-    return Players.find({'gameID': game._id}); 
-  },
-
 });
