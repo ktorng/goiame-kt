@@ -1,3 +1,9 @@
+trackGameState = function() {
+
+}
+
+Tracker.autorun(trackGameState);
+
 Template.gameView.onRendered(function() {
   var game = getCurrentGame();
   var player = getCurrentPlayer();
@@ -15,4 +21,8 @@ Template.gameView.helpers({
     return Players.find({'gameID': game._id}); 
   },
 
+});
+
+Template.gameView.events({
+  'click .btn-leave': leaveGame
 });

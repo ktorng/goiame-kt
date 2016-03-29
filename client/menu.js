@@ -54,7 +54,7 @@ resetUserState = function() {
   Session.set("playerID", null);
 }
 
-trackGameState = function() {
+trackMenuState = function() {
   var gameID = Session.get("gameID");
   var playerID = Session.get("playerID");
 
@@ -86,7 +86,7 @@ trackGameState = function() {
 leaveGame = function() {
   //GAnalystics.event("game-actions", "gameLeave");
   var player = getCurrentPlayer();
-  Session.set("currentView", "startMenu");
+  BlazeLayout.render("main", { content: "startMenu" });
   Players.remove(player._id);
   Session.set("playerID", null);
 }
@@ -120,7 +120,7 @@ if(hasHistoryApi()) {
 }
 */
 
-Tracker.autorun(trackGameState);
+Tracker.autorun(trackMenuState);
 
 /*
 window.onbeforeunload = resetUserState;

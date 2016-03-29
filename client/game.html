@@ -9,6 +9,16 @@
         <div class="player-status player-status-notturn">it is not your turn</div>
       {{/if}}
 
+      <div class="player-status">
+        Name: {{ player.name }}
+        HP: {{ player.stats.health }}
+        STR: {{ player.stats.str }}
+        DEX: {{ player.stats.dex }}
+        INT: {{ player.stats.intel }}
+        ACC: {{ player.stats.acc }}
+        SPD: {{ player.stats.spd }}
+      </div>
+
       <div class="current-location-name">
         You are at: {{ player.location }}
       </div>
