@@ -76,10 +76,9 @@ function trackGameState() {
   }
   */
 
-  //if(game.state === "inProgress"){
-  //  Session.set("currentView", "gameView");
-  //} else if (game.state === "waitingForPlayers") {
-  if (game.state === "waitingForPlayers") {
+  if(game.state === "inProgress"){
+    Session.set("currentView", "gameView");
+  } else if (game.state === "waitingForPlayers") {
     Session.set("currentView", "lobby");
   }
 }
@@ -160,18 +159,14 @@ Template.createGame.events({
 
     game = generateNewGame();
     player = generateNewPlayer(game, playerName);
-    console.log('game and player generated');
 
     Meteor.subscribe('games', game.accessCode);
     Session.set("loading", true);
       
     Meteor.subscribe('players', game._id, function() {
-      console.log('subscribed');
       Session.set("loading", false);
       Session.set("gameID", game._id);
-      console.log(Session.get('gameID'));
       Session.set("playerID", player._id);
-      console.log(Session.get('playerID'));
     });
   },
   'click .btn-back': function(){
@@ -220,7 +215,7 @@ Template.joinGame.events({
         Session.set('playerID', player._id);
         Session.set('currentView', 'lobby');
       } else {
-        FlashMessages.sendError("invalide access code");
+        FlashMessages.sendError("invalid access code");
         //GAnalytics.event("game-actions", "invalidcode");
       }
     });
