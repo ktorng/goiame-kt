@@ -1,5 +1,3 @@
-Session.set("currentView", "startMenu");
-
 function generateAccessCode(){
   var code = "";
   var possible = "abcdefghijklmnopqrstuvwxyz";
@@ -67,19 +65,21 @@ function trackGameState() {
   var game = Games.findOne(gameID);
   var player = Players.findOne(playerID);
 
-/*
   if (!game || !player){
     Session.set("gameID", null);
     Session.set("playerID", null);
-    Session.set("currentView", "startMenu");
+    BlazeLayout.render("main", { content: "startMenu" });
     return;
   }
-  */
 
-  if(game.state === "inProgress"){
-    Session.set("currentView", "gameView");
+  if (game.state === "inProgress") {
+    BlazeLayout.render("main", { content: "gameView" });
+    console.log(game.state);
+    console.log(player.location);
   } else if (game.state === "waitingForPlayers") {
-    Session.set("currentView", "lobby");
+    BlazeLayout.render("main", { content: "lobby" });
+    console.log(game.state);
+    console.log(player.location);
   }
 }
 
@@ -91,6 +91,7 @@ function leaveGame() {
   Session.set("playerID", null);
 }
 
+/*
 function hasHistoryApi() {
   return !!(window.history && window.history.pushState);
 }
@@ -117,8 +118,11 @@ if(hasHistoryApi()) {
   }
   Tracker.autorun(trackUrlState);
 }
+*/
+
 Tracker.autorun(trackGameState);
 
+/*
 window.onbeforeunload = resetUserState;
 window.onpagehide = resetUserState;
 
@@ -126,27 +130,24 @@ FlashMessages.configure({
   autoHide: true,
   autoScroll: false
 });
-
-Template.main.helpers({
-  whichView: function(){
-    return Session.get('currentView');
-  }
-});
+*/
 
 Template.startMenu.events({
   'click #btn-new-game': function(){
-    Session.set("currentView", "createGame");
+    BlazeLayout.render("main", { content: "createGame" });
   },
   'click #btn-join-game': function(){
-    Session.set("currentView", "joinGame");
+    BlazeLayout.render("main", { content: "joinGame" });
   }
 });
 
+/*
 Template.startMenu.rendered = function() {
   //GAnalytics.pageview("/");
 
   resetUserState();
 }
+*/
 
 Template.createGame.events({
   'submit #create-game': function(event){
@@ -170,8 +171,7 @@ Template.createGame.events({
     });
   },
   'click .btn-back': function(){
-    Session.set("currentView", "startMenu");
-    return false;
+    BlazeLayout.render("main", { content: "startMenu" });
   }
 });
 
@@ -181,9 +181,9 @@ Template.createGame.helpers({
   }
 });
 
-Template.createGame.rendered = function(event) {
+Template.createGame.onRendered(function() {
   $("#player-name").focus();
-};
+});
 
 Template.joinGame.events({
   'submit #join-game': function(event){
@@ -213,7 +213,7 @@ Template.joinGame.events({
         Session.set('urlAccessCode', null);
         Session.set('gameID', game._id);
         Session.set('playerID', player._id);
-        Session.set('currentView', 'lobby');
+        BlazeLayout.render("main", { content: "lobby" });
       } else {
         FlashMessages.sendError("invalid access code");
         //GAnalytics.event("game-actions", "invalidcode");
@@ -223,7 +223,7 @@ Template.joinGame.events({
   },
   'click .btn-back': function() {
     Session.set('urlAccessCode', null);
-    Session.set('currentView', 'startMenu');
+    BlazeLayout.render("main", { content: "startMenu" });
     return false;
   }
 });
@@ -234,7 +234,7 @@ Template.joinGame.helpers({
   }
 });
 
-Template.joinGame.rendered = function(event) {
+Template.joinGame.onRendered(function() {
   resetUserState();
 
   var urlAccessCode = Session.get('urlAccessCode');
@@ -246,7 +246,7 @@ Template.joinGame.rendered = function(event) {
   } else {
     $("#access-code").focus();
   }
-};
+});
 
 Template.lobby.helpers({
   game: function() {
@@ -299,6 +299,25 @@ Template.lobby.events({
     var game = getCurrentGame();
     resetUserState();
     Session.set('urlAccessCode', game.accessCode);
-    Session.set('currentView', 'joinGame');
+    BlazeLayout.render("main", { content: "joinGame" });
   }
+});
+
+Template.gameView.onRendered(function() {
+  var game = getCurrentGame();
+  var player = getCurrentPlayer();
+});
+
+Template.gameView.helpers({
+  game: function() {
+    return getCurrentGame();
+  },
+  player: function() {
+    return getCurrentPlayer();
+  },
+  players: function() {
+    var game = getCurrentGame();
+    return Players.find({'gameID': game._id}); 
+  },
+
 });
