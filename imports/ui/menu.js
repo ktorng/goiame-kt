@@ -1,11 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-import { FlowRouter } from 'meteor/kadira:flow-router';
+//import { FlowRouter } from 'meteor/kadira:flow-router';
 import { BlazeLayout } from 'meteor/kadira:blaze-layout';
 
-import '../imports/startup/client/routes.js';
-import { Games } from '../imports/api/models/game.js'; 
-import { Players } from '../imports/api/models/player.js'; 
+import { Games } from '../api/models/game.js'; 
+import { Players } from '../api/models/player.js'; 
 
 import './menu.html';
 
