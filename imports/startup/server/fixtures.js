@@ -1,3 +1,15 @@
+import { Meteor } from 'meteor/meteor';
+
+import '../../api/models/game.js';
+import '../../api/models/player.js';
+
+Meteor.startup(function() {
+  // Delete all games and players at startup
+  Games.remove({});
+  Players.remove({});
+});
+
+
 // generation functions can be used to have a more predefined and predictable game, trading randomized stats for more consistency
 
 Meteor.methods({

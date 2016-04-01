@@ -1,0 +1,209 @@
+<body>
+  {{> main}}
+</body>
+
+<template name="main">
+  <div class="container">
+    <div class="main-content">
+      {{> Template.dynamic template=content}}
+
+      <hr>
+    </div>
+  </div>
+</template>
+
+<template name="startMenu">
+  <div class="main-menu">
+    <h4>welcome to goiame</h4>
+
+    <hr>
+
+    <div class="button-container">
+      <button id="btn-new-game">new game</button>
+      <button id="btn-join-game">join game</button>
+    </div>
+  </div>
+</template>
+
+
+<template name="createGame">
+  <h4>
+    {{#if isLoading }}
+      <span class="spinner"></span>
+    {{/if}}
+  </h4>
+
+  <hr>
+    
+  <form id="create-game">
+    <div class="">
+      <input type="text" id="player-name" name="playerName" placeholder="enter your name">
+
+      <div class="button-container">
+        <input type="submit" value="create game">
+        <button class="btn-back">back</button>
+      </div>
+    </div>
+  </form>
+</template>
+
+<template name="lobby">
+  <h4>
+    {{#if isLoading }}
+      <span class="spinner"></span>
+    {{else}}
+      waiting for players
+    {{/if}}
+  </h4>
+
+  <div class="access-code">
+    access code
+    <span>{{ game.accessCode }}</span>
+  </div>
+
+  <div class="access-buttons">
+    <!--
+    <a class="access-button btn-toggle-qrcode" href="javascript:void(0);">
+      <i class="fa fa-qrcode"></i>
+    </a>
+    -->
+
+    <span class="access-button-separator"></span>
+
+    <a class="access-button btn-send-access-code-email" href='mailto:?subject="join my goiame"&body={{ accessLink }}'>
+      <i class="fa fa-envelope-o"></i>
+    </a>
+  </div>
+
+  <!--
+  <div class="qrcode-container" style="display: none;">
+    <div id="qrcode" class="qrcode"></div>
+
+    <div id="access-link" class="access-link">
+      <a href="{{ accessLink }}">{{ accessLink }}</a>
+    </div>
+  </div>
+  -->
+
+  <hr>
+
+  <ol class="lobby-player-list">
+    {{#each players }}
+      <li>
+        {{ name }}
+
+        {{#if isCurrent }}
+          <a href="#" class="btn-edit-player" data-player-id="{{ _id }}">
+            <i class="fa fa-pencil"></i>
+          </a>
+        {{else}}
+          <a href="#" class="btn-remove-player" data-player-id="{{ _id }}">
+            <i class="fa fa-close"></i>
+          </a>
+        {{/if}}
+      </li>
+    {{/each}}
+  </ol>
+
+  <hr>
+
+  <div class="button-container">
+    <button class="btn-start">start game</button>
+    <button class="btn-leave">leave game</button>
+  </div>
+</template>
+
+<template name="joinGame">
+  <h4>
+    {{#if isLoading}}
+      <span class="spinner"></span>
+    {{else}}
+      welcome to goiame
+    {{/if}}
+  </h4>
+
+  <hr>
+
+  <form id="join-game">
+    <div>
+      <input autocorrect="off" autocapitalize="off" type="text" id="access-code" name="accessCode" placeholder="enter an access code">
+      <input type="text" id="player-name" name="playerName" placeholder="enter your name">
+
+      {{> flashMessages}}
+
+      <div class="button-container">
+        <input type="submit" value="join">
+        <button class="btn-back">back</button>
+      </div>
+    </div>
+  </form>
+</template>
+
+
+<!--
+<template name="gameView">
+<h4><a class="game-countdown {{#if gameFinished }}finished{{/if}} {{#if game.paused }}paused{{/if}}">{{{ timeRemaining }}}</a></h4>
+
+<div class="status-container">
+  <button class="btn-toggle-status">{{_ "ui.show hide" }}</button>
+
+  <div class="status-container-content">
+    {{#if player.isSpy }}
+      <div class="player-status player-status-spy">{{_ "ui.you are the spy" }}</div>
+    {{else}}
+      <div class="player-status player-status-not-spy">{{{_ "ui.you are not the spy" }}}</div>
+
+      <div class="current-location">
+        <div class="current-location-header">
+          {{_ "ui.the location" }}:
+        </div>
+        <div class="current-location-name">
+          {{_ game.location.name }}
+        </div>
+      </div>
+
+      <div class="current-role">
+        <div class="current-role-header">
+          {{_ "ui.your role" }}:
+        </div>
+        <div class="current-role-name">
+          {{_ player.role }}
+        </div>
+      </div>
+    {{/if}}
+  </div>
+</div>
+
+<h5>{{_ "ui.players" }}</h5>
+<ul class="ingame-player-list">
+  {{#each players }}
+    <li>
+      <div class="player-name">
+        {{ name }}
+        {{#if isFirstPlayer}}
+          <div class="first-player-indicator">{{{_ "ui.first" }}}</div>
+        {{/if}}
+      </div>
+    </li>
+  {{/each}}
+</ul>
+
+<div class="u-cf"></div>
+
+<h5>{{_ "ui.location reference" }}</h5>
+<ul class="location-list">
+  {{#each locations }}
+    <li>
+      <div class="location-name">{{_ name }}</div>
+    </li>
+  {{/each}}
+</ul>
+
+<hr>
+
+<div class="button-container">
+  <button class="btn-end">{{_ "ui.end game" }}</button>
+  <button class="btn-leave">{{_ "ui.leave game" }}</button>
+</div>
+</template>
+-->
