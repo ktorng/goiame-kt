@@ -6,7 +6,7 @@ import './attributes/stat.js';
 import './attributes/modifier.js';
 
 
-Players = new Mongo.Collection('players');
+export const Players = new Mongo.Collection('players');
 
 Player = Astro.Class({
   name: 'Player',
@@ -20,7 +20,7 @@ Player = Astro.Class({
         Validators.maxLength(30, 'Your character name must be less than 30 characters.')
       ]
     },
-    gameID: {
+    gameId: {
       type: 'string',
     },
     age: {

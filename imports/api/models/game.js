@@ -2,9 +2,10 @@ import { Mongo } from 'meteor/mongo';
 import { Astro } from 'meteor/jagi:astronomy';
 
 
-Games = new Mongo.Collection("games");
+export const Games = new Mongo.Collection("games");
 
-Games = Astro.Class({
+
+Game = Astro.Class({
   name: 'Games',
   collection: Games,
   fields: {
@@ -23,3 +24,4 @@ Games = Astro.Class({
     }
   }
 });
+

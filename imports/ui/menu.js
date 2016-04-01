@@ -10,75 +10,75 @@ import { Players } from '../imports/api/models/player.js';
 import './menu.html';
 
 generateAccessCode = function() {
-  var code = "";
-  var possible = "abcdefghijklmnopqrstuvwxyz";
+  let code = "";
+  let possible = "abcdefghijklmnopqrstuvwxyz";
   
-  for(var i=0; i<5; i++){
+  for(let i=0; i<5; i++){
     code += possible.charAt(Math.floor(Math.random() * possible.length));
   }
   return code;
 }
 
 generateNewGame = function() {
-    var game = {
+    let game = {
       accessCode: generateAccessCode(),
       state: "waitingForPlayers",
       paused: false
     };
-    gameID = Games.insert(game);
+    gameId = Games.insert(game);
 
-    return Games.findOne(gameID);
+    return Games.findOne(gameId);
 }
 
 generateNewPlayer = function(game, name) {
-    var player = {
-      gameID: game._id,
+    let player = {
+      gameId: game._id,
       name: name,
     };
-    playerID = Players.insert(player);
+    playerId = Players.insert(player);
 
-    return Players.findOne(playerID);
+    return Players.findOne(playerId);
 }
 
 getCurrentPlayer = function() {
-  var playerID = Session.get("playerID");
+  let playerId = Session.get("playerId");
 
-  if(playerID) {
-    return Players.findOne(playerID);
+  if(playerId) {
+    return Players.findOne(playerId);
   }
 }
 
 getCurrentGame = function() {
-  var gameID = Session.get("gameID");
+  let gameId = Session.get("gameId");
 
-  if(gameID) {
-    return Games.findOne(gameID);
+  if(gameId) {
+    return Games.findOne(gameId);
   }
 }
 
 resetUserState = function() {
-  var player = getCurrentPlayer();
+  let player = getCurrentPlayer();
   if(player) {
     Players.remove(player._id);
   }
-  Session.set("gameID", null);
-  Session.set("playerID", null);
+  Session.set("gameId", null);
+  Session.set("playerId", null);
 }
 
 trackMenuState = function() {
-  var gameID = Session.get("gameID");
-  var playerID = Session.get("playerID");
+  let gameId = Session.get("gameId");
+  let playerId = Session.get("playerId");
 
-  if (!gameID || !playerID){
+  if (!gameId || !playerId){
     return;
   }
 
-  var game = Games.findOne(gameID);
-  var player = Players.findOne(playerID);
+  let game = Games.findOne(gameId);
+  let player = Players.findOne(playerId);
 
   if (!game || !player){
-    Session.set("gameID", null);
-    Session.set("playerID", null);
+    Session.set("gameId", null);
+    Session.set("playerId", null);
     BlazeLayout.render("main", { content: "startMenu" });
     return;
   }
@@ -96,10 +96,10 @@ trackMenuState = function() {
 
 leaveGame = function() {
   //GAnalystics.event("game-actions", "gameLeave");
-  var player = getCurrentPlayer();
+  let player = getCurrentPlayer();
   BlazeLayout.render("main", { content: "startMenu" });
   Players.remove(player._id);
-  Session.set("playerID", null);
+  Session.set("playerId", null);
 }
 
 /*
@@ -113,15 +113,15 @@ Meteor.setInterval(function() {
 
 if(hasHistoryApi()) {
   function trackUrlState() {
-    var accessCode = null
-    var game = getCurrentGame();
+    let accessCode = null
+    let game = getCurrentGame();
     if(game) {
       accessCode = game.accessCode;
     } else {
       accessCode = Session.get('urlAccessCode');
     }
 
-    var currentURL = '/';
+    let currentURL = '/';
     if(accessCode) {
       currentURL += accessCode + '/';
     }
@@ -163,7 +163,7 @@ Template.startMenu.rendered = function() {
 Template.createGame.events({
   'submit #create-game': function(event){
     event.preventDefault();
-    var playerName = event.target.playerName.value;
+    let playerName = event.target.playerName.value;
 
     if (!playerName || Session.get('loading')) {
       return false;
@@ -177,8 +177,8 @@ Template.createGame.events({
       
     Meteor.subscribe('players', game._id, function() {
       Session.set("loading", false);
-      Session.set("gameID", game._id);
-      Session.set("playerID", player._id);
+      Session.set("gameId", game._id);
+      Session.set("playerId", player._id);
     });
   },
   'click .btn-back': function(){
@@ -200,8 +200,8 @@ Template.joinGame.events({
   'submit #join-game': function(event){
     //GAnalytics.event("game-actions", "gamejoin");
 
-    var accessCode = event.target.accessCode.value;
-    var playerName = event.target.playerName.value;
+    let accessCode = event.target.accessCode.value;
+    let playerName = event.target.playerName.value;
 
     if(!playerName || Session.get('loading')) {
       return false;
@@ -215,15 +215,15 @@ Template.joinGame.events({
     Meteor.subscribe('games', accessCode, function() {
       Session.set('loading', false);
 
-      var game = Games.findOne({accessCode: accessCode});
+      let game = Games.findOne({accessCode: accessCode});
 
       if(game) {
         Meteor.subscribe('players', game._id);
         player = generateNewPlayer(game, playerName);
 
         Session.set('urlAccessCode', null);
-        Session.set('gameID', game._id);
-        Session.set('playerID', player._id);
+        Session.set('gameId', game._id);
+        Session.set('playerId', player._id);
         BlazeLayout.render("main", { content: "lobby" });
       } else {
         FlashMessages.sendError("invalid access code");
@@ -248,7 +248,7 @@ Template.joinGame.helpers({
 Template.joinGame.onRendered(function() {
   resetUserState();
 
-  var urlAccessCode = Session.get('urlAccessCode');
+  let urlAccessCode = Session.get('urlAccessCode');
 
   if(urlAccessCode) {
     $("#access-code").val(urlAccessCode);
@@ -270,14 +270,14 @@ Template.lobby.helpers({
     return getCurrentPlayer();
   },
   players: function() {
-    var game = getCurrentGame();
-    var currentPlayer = getCurrentPlayer();
+    let game = getCurrentGame();
+    let currentPlayer = getCurrentPlayer();
 
     if(!game) {
       return null;
     }
     
-    var players = Players.find({'gameID': game._id}, {'sort': {'createdAt': 1}}).fetch();
+    let players = Players.find({'gameId': game._id}, {'sort': {'createdAt': 1}}).fetch();
 
     players.forEach(function(player){
       if(player._id === currentPlayer._id){
@@ -288,7 +288,7 @@ Template.lobby.helpers({
     return players;
   },
   isLoading: function(){
-    var game = getCurrentGame();
+    let game = getCurrentGame();
     return game.state === 'settingUp';
   }
 });
@@ -299,15 +299,15 @@ Template.lobby.events({
   'click .btn-start': function() {
     //GAnalytics.event("game-actions", "gamestart");
 
-    var game = getCurrentGame();
+    let game = getCurrentGame();
     Games.update(game._id, {$set: {state: 'settingUp'}});
   },
   'click .btn-remove-player': function() {
-    var playerID = $(event.currentTarget).data('player-id');
-    Players.remove(playerID);
+    let playerId = $(event.currentTarget).data('player-id');
+    Players.remove(playerId);
   },
   'click .btn-edit-player': function() {
-    var game = getCurrentGame();
+    let game = getCurrentGame();
     resetUserState();
     Session.set('urlAccessCode', game.accessCode);
     BlazeLayout.render("main", { content: "joinGame" });

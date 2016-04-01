@@ -1,3 +1,7 @@
+import { Games } from './models/game.js';
+import { Players } from './models/player.js';
+
+
 function cleanUp() {
   var cutOff = moment().subtract(2, 'hours').toDate().getTime();
 

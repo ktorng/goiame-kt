@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
-import '../../api/models/game.js';
-import '../../api/models/player.js';
+import { Games } from '../../api/models/game.js';
+import { Players } from '../../api/models/player.js';
 
 Meteor.startup(function() {
   // Delete all games and players at startup
