@@ -1,6 +1,30 @@
+import { Meteor } from 'meteor/meteor';
+
 import { Games } from './models/game.js';
 import { Players } from './models/player.js';
 
+Meteor.methods({
+  'generateNewGame'(accessCode) {
+    var gameId = Games.insert({
+      accessCode: accessCode,
+      state: "waitingForPlayers",
+      paused: false,
+    });
+
+    return gameId;
+  },
+  'generateNewPlayer'(gameId, name) {
+    var playerId = Players.insert({
+      gameId: gameId,
+      name: name,
+    });
+
+    return playerId;
+  },
+  'removePlayer'(playerId) {
+    Players.remove(playerId);
+  },
+});
 
 function cleanUp() {
   var cutOff = moment().subtract(2, 'hours').toDate().getTime();

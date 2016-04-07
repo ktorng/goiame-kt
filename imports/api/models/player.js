@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { Astro } from 'meteor/jagi:astronomy';
 import { Validators } from 'meteor/jagi:astronomy-validators';
@@ -92,6 +93,7 @@ Player = Astro.Class({
       this.modifiedAt = new Date();
     }
   },
+  /*
   methods: {
     generateSlug: function() {
       var self = this;
@@ -100,5 +102,5 @@ Player = Astro.Class({
       });
     }
   }
-
+  */
 });

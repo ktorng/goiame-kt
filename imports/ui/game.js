@@ -1,3 +1,4 @@
+/*
 trackGameState = function() {
 
 }
@@ -26,3 +27,4 @@ Template.gameView.helpers({
 Template.gameView.events({
   'click .btn-leave': leaveGame
 });
+*/

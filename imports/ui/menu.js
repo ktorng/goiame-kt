@@ -1,16 +1,22 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-//import { FlowRouter } from 'meteor/kadira:flow-router';
 import { BlazeLayout } from 'meteor/kadira:blaze-layout';
 
 import { Games } from '../api/models/game.js'; 
 import { Players } from '../api/models/player.js'; 
 
 import './menu.html';
+import '../api/methods.js';
+
+Template.body.onCreated(function bodyOnCreated() {
+  //Meteor.subscribe('games', function() {
+  //  console.log(Games.find().fetch()); 
+  //});
+});
 
 generateAccessCode = function() {
   let code = "";
-  let possible = "abcdefghijklmnopqrstuvwxyz";
+  const possible = "abcdefghijklmnopqrstuvwxyz";
   
   for(let i=0; i<5; i++){
     code += possible.charAt(Math.floor(Math.random() * possible.length));
@@ -18,6 +24,7 @@ generateAccessCode = function() {
   return code;
 }
 
+/*
 generateNewGame = function() {
     let game = {
       accessCode: generateAccessCode(),
@@ -37,6 +44,17 @@ generateNewPlayer = function(game, name) {
     playerId = Players.insert(player);
 
     return Players.findOne(playerId);
+}
+*/
+
+getAccessLink = function() {
+  const game = getCurrentGame();
+
+  if (!game){
+    return;
+  }
+
+  return Meteor.settings.public.url + game.accessCode + "/";
 }
 
 getCurrentPlayer = function() {
@@ -58,7 +76,7 @@ getCurrentGame = function() {
 resetUserState = function() {
   let player = getCurrentPlayer();
   if(player) {
-    Players.remove(player._id);
+    Meteor.call('removePlayer', player._id);
   }
   Session.set("gameId", null);
   Session.set("playerId", null);
@@ -75,21 +93,21 @@ trackMenuState = function() {
   let game = Games.findOne(gameId);
   let player = Players.findOne(playerId);
 
-  if (!game || !player){
+  
+  if (!game && !player){
     Session.set("gameId", null);
     Session.set("playerId", null);
     BlazeLayout.render("main", { content: "startMenu" });
     return;
   }
+  
 
   if (game.state === "inProgress") {
     BlazeLayout.render("main", { content: "gameView" });
     console.log(game.state);
-    console.log(player.location);
   } else if (game.state === "waitingForPlayers") {
     BlazeLayout.render("main", { content: "lobby" });
     console.log(game.state);
-    console.log(player.location);
   }
 }
 
@@ -97,11 +115,11 @@ leaveGame = function() {
   //GAnalystics.event("game-actions", "gameLeave");
   let player = getCurrentPlayer();
   BlazeLayout.render("main", { content: "startMenu" });
-  Players.remove(player._id);
+  Meteor.call('removePlayer', player._id);
   Session.set("playerId", null);
 }
 
-/*
+
 function hasHistoryApi() {
   return !!(window.history && window.history.pushState);
 }
@@ -128,7 +146,7 @@ if(hasHistoryApi()) {
   }
   Tracker.autorun(trackUrlState);
 }
-*/
+
 
 Tracker.autorun(trackMenuState);
 
@@ -160,35 +178,41 @@ Template.startMenu.rendered = function() {
 */
 
 Template.createGame.events({
-  'submit #create-game': function(event){
+  'submit #create-game': function(event) {
     event.preventDefault();
-    let playerName = event.target.playerName.value;
+    const playerName = event.target.playerName.value;
 
     if (!playerName || Session.get('loading')) {
       return false;
     }
 
-    game = generateNewGame();
-    player = generateNewPlayer(game, playerName);
+    const accessCode = generateAccessCode();
 
-    Meteor.subscribe('games', game.accessCode);
+    Meteor.call('generateNewGame', accessCode, function(error, gameId) {
+      Session.set('gameId', gameId);
+      Meteor.call('generateNewPlayer', gameId, playerName, function(error, playerId) {
+        Session.set('playerId', playerId);
+      });
+    });
+
+    Meteor.subscribe('games', accessCode);
     Session.set("loading", true);
       
-    Meteor.subscribe('players', game._id, function() {
+    setTimeout(function () {
+    Meteor.subscribe('players', Session.get('gameId'), function() {
       Session.set("loading", false);
-      Session.set("gameId", game._id);
-      Session.set("playerId", player._id);
     });
+    }, 100);
   },
   'click .btn-back': function(){
     BlazeLayout.render("main", { content: "startMenu" });
-  }
+  },
 });
 
 Template.createGame.helpers({
   isLoading: function(){
     return Session.get('loading');
-  }
+  },
 });
 
 Template.createGame.onRendered(function() {
@@ -212,18 +236,22 @@ Template.joinGame.events({
     Session.set('loading', true);
 
     Meteor.subscribe('games', accessCode, function() {
-      Session.set('loading', false);
 
       let game = Games.findOne({accessCode: accessCode});
+      Session.set('gameId', game._id);
+      console.log(game);
 
-      if(game) {
-        Meteor.subscribe('players', game._id);
-        player = generateNewPlayer(game, playerName);
-
-        Session.set('urlAccessCode', null);
-        Session.set('gameId', game._id);
-        Session.set('playerId', player._id);
-        BlazeLayout.render("main", { content: "lobby" });
+      if (game) {
+        Meteor.call('generateNewPlayer', game._id, playerName, function(error, playerId) {
+          console.log('player joined: ' + playerId);
+          Session.set('playerId', playerId);
+          Session.set('urlAccessCode', null);
+        });
+        Meteor.subscribe('players', game._id, function() {
+          Session.set('loading', false);
+          console.log(Players.findOne());
+          BlazeLayout.render("main", { content: "lobby" });
+        });
       } else {
         FlashMessages.sendError("invalid access code");
         //GAnalytics.event("game-actions", "invalidcode");
@@ -303,12 +331,21 @@ Template.lobby.events({
   },
   'click .btn-remove-player': function() {
     let playerId = $(event.currentTarget).data('player-id');
-    Players.remove(playerId);
+    Meteor.call('removePlayer', playerId);
   },
   'click .btn-edit-player': function() {
     let game = getCurrentGame();
     resetUserState();
     Session.set('urlAccessCode', game.accessCode);
     BlazeLayout.render("main", { content: "joinGame" });
-  }
+  },
+  'click .session-to-console': function(){
+    console.log(Session.get('gameId'));
+    console.log(Session.get('playerId'));
+    console.log(Games.find(Session.get('gameId')).fetch());
+    Players.find().forEach(function (player) {
+      console.log(player);
+    });
+    //console.log(Players.find(Session.get('playerId')).fetch());
+  },
 });

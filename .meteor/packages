@@ -23,7 +23,6 @@ twbs:bootstrap
 fortawesome:fontawesome
 momentjs:moment
 erasaur:meteor-lodash
-insecure
 kadira:blaze-layout
 mrt:flash-messages
 standard-minifier-css
