@@ -84,6 +84,7 @@ Player = Astro.Class({
     }
   },
 
+  /*
   events: {
     afterInit: function() {
       this.createdAt = new Date();
@@ -93,7 +94,6 @@ Player = Astro.Class({
       this.modifiedAt = new Date();
     }
   },
-  /*
   methods: {
     generateSlug: function() {
       var self = this;

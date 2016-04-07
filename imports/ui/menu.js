@@ -150,7 +150,7 @@ if(hasHistoryApi()) {
 
 Tracker.autorun(trackMenuState);
 
-/*
+
 window.onbeforeunload = resetUserState;
 window.onpagehide = resetUserState;
 
@@ -158,7 +158,7 @@ FlashMessages.configure({
   autoHide: true,
   autoScroll: false
 });
-*/
+
 
 Template.startMenu.events({
   'click #btn-new-game': function(){
@@ -169,13 +169,11 @@ Template.startMenu.events({
   }
 });
 
-/*
 Template.startMenu.rendered = function() {
   //GAnalytics.pageview("/");
 
   resetUserState();
 }
-*/
 
 Template.createGame.events({
   'submit #create-game': function(event) {
@@ -190,19 +188,18 @@ Template.createGame.events({
 
     Meteor.call('generateNewGame', accessCode, function(error, gameId) {
       Session.set('gameId', gameId);
+      console.log(Session.get('gameId'));
+      Meteor.subscribe('games', accessCode);
+      Session.set("loading", true);
       Meteor.call('generateNewPlayer', gameId, playerName, function(error, playerId) {
         Session.set('playerId', playerId);
+        Meteor.subscribe('players', Session.get('gameId'), function() {
+          Session.set("loading", false);
+        });
       });
     });
 
-    Meteor.subscribe('games', accessCode);
-    Session.set("loading", true);
       
-    setTimeout(function () {
-    Meteor.subscribe('players', Session.get('gameId'), function() {
-      Session.set("loading", false);
-    });
-    }, 100);
   },
   'click .btn-back': function(){
     BlazeLayout.render("main", { content: "startMenu" });
@@ -239,7 +236,6 @@ Template.joinGame.events({
 
       let game = Games.findOne({accessCode: accessCode});
       Session.set('gameId', game._id);
-      console.log(game);
 
       if (game) {
         Meteor.call('generateNewPlayer', game._id, playerName, function(error, playerId) {
@@ -249,7 +245,6 @@ Template.joinGame.events({
         });
         Meteor.subscribe('players', game._id, function() {
           Session.set('loading', false);
-          console.log(Players.findOne());
           BlazeLayout.render("main", { content: "lobby" });
         });
       } else {
@@ -300,7 +295,7 @@ Template.lobby.helpers({
     let game = getCurrentGame();
     let currentPlayer = getCurrentPlayer();
 
-    if(!game) {
+    if(!game || !currentPlayer) {
       return null;
     }
     
@@ -327,7 +322,7 @@ Template.lobby.events({
     //GAnalytics.event("game-actions", "gamestart");
 
     let game = getCurrentGame();
-    Games.update(game._id, {$set: {state: 'settingUp'}});
+    Meteor.call('changeGameState', game._id, 'settingUp');
   },
   'click .btn-remove-player': function() {
     let playerId = $(event.currentTarget).data('player-id');
@@ -346,6 +341,5 @@ Template.lobby.events({
     Players.find().forEach(function (player) {
       console.log(player);
     });
-    //console.log(Players.find(Session.get('playerId')).fetch());
   },
 });

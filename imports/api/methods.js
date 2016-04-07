@@ -24,6 +24,63 @@ Meteor.methods({
   'removePlayer'(playerId) {
     Players.remove(playerId);
   },
+  'changeGameState'(gameId, state) {
+    const game = Games.findOne(gameId);
+    game.set('state', state);
+    game.save();
+  },
+  'firstTurn'(players){
+    const firstPlayerIndex = Math.floor(Math.random() * players.count());
+    console.log(firstPlayerIndex);
+
+    players.forEach(function(player, index) {
+      player.set({
+        'isTurn': index === firstPlayerIndex,
+        'location': 'Headquarters'
+      });
+    
+      console.log('asdf');
+      player.save();
+    });
+  },
+  'generatePlayerStats'(players){
+    players.forEach(function(player) {
+      player.set({
+      'stats.str': Math.round(50 + 100 * Math.random()),
+      'stats.dex': Math.round(50 + 100 * Math.random()),
+      'stats.intel': Math.round(50 + 100 * Math.random()),
+      'stats.acc': Math.round(60 + 20 * Math.random()),
+      'stats.spd': Math.round(80 + 40 * Math.random())
+      });
+
+      player.save();
+    });
+  },
+  'gameSetup'(gameId, players) {
+    const firstPlayerIndex = Math.floor(Math.random() * players.count());
+    console.log(firstPlayerIndex);
+
+    players.forEach(function(player, index) {
+      player.set({
+        'isTurn': index === firstPlayerIndex,
+        'location': 'Headquarters',
+        'stats.str': Math.round(50 + 100 * Math.random()),
+        'stats.dex': Math.round(50 + 100 * Math.random()),
+        'stats.intel': Math.round(50 + 100 * Math.random()),
+        'stats.acc': Math.round(60 + 20 * Math.random()),
+        'stats.spd': Math.round(80 + 40 * Math.random()),
+      });
+    
+      console.log('asdf');
+      player.save();
+    });
+
+    //Meteor.call('changeGameState', gameId, 'inProgress');
+    let game = Games.findOne(gameId);
+    game.set('state', 'inProgress');
+    game.save();
+
+  },
 });
 
 function cleanUp() {
@@ -66,24 +123,13 @@ function shuffleArray(a) {
 
 Games.find({"state": 'settingUp'}).observeChanges({
   added: function(id, game) {
-    var players = Players.find({gameID: id});
-    var firstPlayerIndex = Math.floor(Math.random() * players.count());
+    let players = Players.find({gameId: id});
+    console.log('wonted');
 
-    players.forEach(function(player, index) {
-      player.set({
-        'isTurn': index === firstPlayerIndex,
-        'location': 'Headquarters'
-      });
-    
-
- //     if (player.validate()) {
-        player.save();
-  //    }
-    });
-
-    generateStats(players);
-
-    Games.update(id, {$set: {state: 'inProgress'}});
+    Meteor.call('gameSetup', id, players);
+//    Meteor.call('firstTurn', players);
+//    Meteor.call('generatePlayerStats', players);
+//    Meteor.call('changeGameState', id, 'inProgress');
   }
 });
 

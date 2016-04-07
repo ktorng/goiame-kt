@@ -1,3 +1,7 @@
+import { Mongo } from 'meteor/mongo';
+import { Astro } from 'meteor/jagi:astronomy';
+import { Validators } from 'meteor/jagi:astronomy-validators';
+
 Modifiers = new Mongo.Collection('modifiers');
 
 Modifier = Astro.Class({
@@ -33,6 +37,7 @@ Modifier = Astro.Class({
       ]
     }
   },
+  /*
   events: {
     afterChange: function(e) {
       this.set('modifiedAt', Date.now());
@@ -43,4 +48,5 @@ Modifier = Astro.Class({
       this.inc(stat, val);
     }
   }
+  */
 });

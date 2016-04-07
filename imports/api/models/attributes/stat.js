@@ -1,3 +1,6 @@
+import { Mongo } from 'meteor/mongo';
+import { Astro } from 'meteor/jagi:astronomy';
+
 Stats = new Mongo.Collection('stats');
 
 Stat = Astro.Class({
@@ -46,9 +49,10 @@ Stat = Astro.Class({
       type: 'date'
     }
   },
+  /*
   events: {
     afterInit: function() {
-      // this.modifiedAt = new Date();
+      this.modifiedAt = new Date();
     },
     afterSet: function() {
       this.modifiedAt = new Date();
@@ -59,4 +63,5 @@ Stat = Astro.Class({
       this.inc(stat, val);
     }
   }
+  */
 });
