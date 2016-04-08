@@ -37,9 +37,8 @@ Modifier = Astro.Class({
       ]
     }
   },
-  /*
   events: {
-    afterChange: function(e) {
+    beforeChange: function(e) {
       this.set('modifiedAt', Date.now());
     }
   },
@@ -48,5 +47,4 @@ Modifier = Astro.Class({
       this.inc(stat, val);
     }
   }
-  */
 });

@@ -1,4 +1,14 @@
-/*
+import { Meteor } from 'meteor/meteor';
+import { Template } from 'meteor/templating';
+import { BlazeLayout } from 'meteor/kadira:blaze-layout';
+
+import { Games } from '../api/models/game.js'; 
+import { Players } from '../api/models/player.js'; 
+
+import './game.html';
+import './menu.js';
+import '../api/methods.js';
+
 trackGameState = function() {
 
 }
@@ -27,4 +37,3 @@ Template.gameView.helpers({
 Template.gameView.events({
   'click .btn-leave': leaveGame
 });
-*/

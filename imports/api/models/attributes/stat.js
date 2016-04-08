@@ -49,12 +49,11 @@ Stat = Astro.Class({
       type: 'date'
     }
   },
-  /*
   events: {
     afterInit: function() {
       this.modifiedAt = new Date();
     },
-    afterSet: function() {
+    beforeChange: function() {
       this.modifiedAt = new Date();
     }
   },
@@ -63,5 +62,4 @@ Stat = Astro.Class({
       this.inc(stat, val);
     }
   }
-  */
 });
