@@ -9,26 +9,74 @@
         <div class="player-status player-status-notturn">it is not your turn</div>
       {{/if}}
 
-      <div class="player-status">
-        Name: {{ player.name }}
-        HP: {{ player.stats.health }}
-        STR: {{ player.stats.str }}
-        DEX: {{ player.stats.dex }}
-        INT: {{ player.stats.intel }}
-        ACC: {{ player.stats.acc }}
-        SPD: {{ player.stats.spd }}
-      </div>
 
       <div class="current-location-name">
         You are at: {{ player.location }}
       </div>
     </div>
   </div>
+</template>
 
-  <hr>
-
+<template name="gameButtons">
   <div class="button-container">
-    <button class="btn-end">end game</button>
-    <button class="btn-leave">leave game</button>
+    <button class="btn-status">status</button>
+    <button class="btn-character">character</button>
+    <button class="btn-location">location</button>
+    <button class="btn-targets">targets</button>
+    <button class="btn-inventory">inventory</button>
+    <button class="btn-game-menu">menu</button>
   </div>
+</template>
+
+<template name="character">
+  <div class="status-container">
+    <div class="status-container-content">
+      <div class="player">
+        <ol class="game-menu-list">
+          <li>Name: {{ player.name }}</li>
+          <li>HP: {{ player.stats.health }}</li>
+          <li>STR: {{ player.stats.str }}</li>
+          <li>DEX: {{ player.stats.dex }}</li>
+          <li>INT: {{ player.stats.intel }}</li>
+          <li>ACC: {{ player.stats.acc }}</li>
+          <li>SPD: {{ player.stats.spd }}</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="targets">
+  <div class="status-container">
+    <div class="status-container-content">
+      <div class="enemy">
+        <ol class="game-menu-list">
+          <li>Name: {{ nemesis.name }}</li>
+          <li>HP: {{ nemesis.stats.health }}</li>
+          <li>STR: {{ nemesis.stats.str }}</li>
+          <li>DEX: {{ nemesis.stats.dex }}</li>
+          <li>INT: {{ nemesis.stats.intel }}</li>
+          <li>ACC: {{ nemesis.stats.acc }}</li>
+          <li>SPD: {{ nemesis.stats.spd }}</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="gameMenu">
+  <div class="button-container">
+    <ol class="game-menu-list">
+      <li><button class="btn-pause">pause</button></li>
+      <li><button class="btn-end">end game</button></li>
+      <li><button class="btn-leave">leave game</button></li>
+      <li><button class="btn-instructions">instructions</button></li>
+      <li><button class="btn-back">back</button></li>
+    </ol>
+  </div>
+</template>
+
+<template name="instructions">
+  just own own own
+    <button class="btn-back">back</button>
 </template>

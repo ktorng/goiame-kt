@@ -1,4 +1,13 @@
-Enemies = new Mongo.Collection('enemies');
+import { Meteor } from 'meteor/meteor';
+import { Mongo } from 'meteor/mongo';
+import { Astro } from 'meteor/jagi:astronomy';
+import { Validators } from 'meteor/jagi:astronomy-validators';
+
+import './attributes/stat.js';
+import './attributes/modifier.js';
+
+
+export const Enemies = new Mongo.Collection('enemies');
 
 Enemy = Astro.Class({
   name: 'Enemy',
@@ -7,7 +16,7 @@ Enemy = Astro.Class({
     name: {
       type: 'string',
     },
-    gameID: {
+    gameId: {
       type: 'string',
     },
     // image: {

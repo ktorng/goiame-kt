@@ -6,13 +6,8 @@ import { Games } from '../api/models/game.js';
 import { Players } from '../api/models/player.js'; 
 
 import './menu.html';
+import './game.html';
 import '../api/methods.js';
-
-Template.body.onCreated(function bodyOnCreated() {
-  //Meteor.subscribe('games', function() {
-  //  console.log(Games.find().fetch()); 
-  //});
-});
 
 generateAccessCode = function() {
   let code = "";
@@ -23,29 +18,6 @@ generateAccessCode = function() {
   }
   return code;
 }
-
-/*
-generateNewGame = function() {
-    let game = {
-      accessCode: generateAccessCode(),
-      state: "waitingForPlayers",
-      paused: false
-    };
-    gameId = Games.insert(game);
-
-    return Games.findOne(gameId);
-}
-
-generateNewPlayer = function(game, name) {
-    let player = {
-      gameId: game._id,
-      name: name,
-    };
-    playerId = Players.insert(player);
-
-    return Players.findOne(playerId);
-}
-*/
 
 getAccessLink = function() {
   const game = getCurrentGame();
@@ -103,7 +75,8 @@ trackMenuState = function() {
   
 
   if (game.state === "inProgress") {
-    BlazeLayout.render("main", { content: "gameView" });
+    BlazeLayout.render("main", { content: "gameView", footer: "gameButtons" });
+    //BlazeLayout.render("main", { content: "gameView" });
     console.log(game.state);
   } else if (game.state === "waitingForPlayers") {
     BlazeLayout.render("main", { content: "lobby" });
@@ -190,12 +163,14 @@ Template.createGame.events({
       Session.set('gameId', gameId);
       console.log(Session.get('gameId'));
       Meteor.subscribe('games', accessCode);
-      Session.set("loading", true);
+      Meteor.subscribe('players', gameId);
+      Meteor.subscribe('enemies', gameId);
+      //Session.set("loading", true);
       Meteor.call('generateNewPlayer', gameId, playerName, function(error, playerId) {
         Session.set('playerId', playerId);
-        Meteor.subscribe('players', Session.get('gameId'), function() {
-          Session.set("loading", false);
-        });
+      //  Meteor.subscribe('players', Session.get('gameId'), function() {
+      //    Session.set("loading", false);
+      //  });
       });
     });
 
@@ -247,6 +222,7 @@ Template.joinGame.events({
           Session.set('loading', false);
           BlazeLayout.render("main", { content: "lobby" });
         });
+        Meteor.subscribe('enemies', game._id);
       } else {
         FlashMessages.sendError("invalid access code");
         //GAnalytics.event("game-actions", "invalidcode");

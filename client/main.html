@@ -10,3 +10,17 @@
   <link rel="stylesheet" href="css/skeleton.css" type="text/css">
   <link rel="stylesheet" href="css/styles.less" type="text/css">
 </head>
+
+<body>
+</body>
+
+<template name="main">
+  <div class="container">
+    <div class="main-content">
+      {{> Template.dynamic template=content}}
+      {{> Template.dynamic template=footer}}
+
+      <hr>
+    </div>
+  </div>
+</template>
