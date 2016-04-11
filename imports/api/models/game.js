@@ -1,27 +1,22 @@
 import { Mongo } from 'meteor/mongo';
-import { Astro } from 'meteor/jagi:astronomy';
+import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
 
 export const Games = new Mongo.Collection("games");
 
-
-Game = Astro.Class({
-  name: 'Games',
-  collection: Games,
-  fields: {
-    accessCode:{
-      type: 'string'
-    },
-    state:{
-      type: 'string'
-    },
-    paused:{
-      type: 'boolean'
-    },
-    gameTime:{
-      type: 'number',
-      default: 0
-    }
-  }
-});
-
+Games.attachSchema(new SimpleSchema({
+  accessCode: {
+    type: String,
+  },
+  state: {
+    type: String,
+  },
+  paused: {
+    type: String,
+    defaultValue: false,
+  },
+  gameTime: {
+    type: Number,
+    defaultValue: 0,
+  },
+}));

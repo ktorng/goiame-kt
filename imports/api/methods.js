@@ -26,9 +26,7 @@ Meteor.methods({
     Players.remove(playerId);
   },
   'changeGameState'(gameId, state) {
-    const game = Games.findOne(gameId);
-    game.set('state', state);
-    game.save();
+    Games.update(gameId, {$set: {'state': state}});
   },
   //Make random player first turn
   //Set beginning location to HQ
@@ -38,7 +36,7 @@ Meteor.methods({
     const firstPlayerIndex = Math.floor(Math.random() * players.count());
 
     players.forEach(function(player, index) {
-      player.set({
+      Players.update(player._id, {$set: {
         'isTurn': index === firstPlayerIndex,
         'location': 'Headquarters',
         'stats.str': Math.round(50 + 100 * Math.random()),
@@ -46,8 +44,7 @@ Meteor.methods({
         'stats.intel': Math.round(50 + 100 * Math.random()),
         'stats.acc': Math.round(60 + 20 * Math.random()),
         'stats.spd': Math.round(80 + 40 * Math.random()),
-      });
-      player.save();
+      }});
       console.log(player)
     });
 

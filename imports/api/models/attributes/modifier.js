@@ -1,50 +1,32 @@
 import { Mongo } from 'meteor/mongo';
-import { Astro } from 'meteor/jagi:astronomy';
-import { Validators } from 'meteor/jagi:astronomy-validators';
+import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
-Modifiers = new Mongo.Collection('modifiers');
-
-Modifier = Astro.Class({
-  name: 'Modifier',
-  collection: Modifiers,
-  fields: {
-    type: {
-      type: 'string',
-      validator: [
-        Validators.choice([
-          'Attack Up',
-          'Attack Down',
-          'Slow'
-        ])
-      ]
-    },
-    value: {
-      type: 'number',
-      validator: [
-        Validators.required()
-      ]
-    },
-    expireAfterTime: {
-      type: 'number',
-      validator: [
-        Validators.required()
-      ]
-    },
-    modifiedAt: {
-      type: 'date',
-      validator: [
-        Validators.required()
-      ]
-    }
+Modifiers = new SimpleSchema({
+  type: {
+    type: 'string',
+    allowedValues: [
+      'Defense Down',
+      'Defense Down',
+      'Slow',
+    ],
   },
-  events: {
-    beforeChange: function(e) {
-      this.set('modifiedAt', Date.now());
-    }
+  value: {
+    type: Number,
   },
-  methods: {
-    incrementStatBy: function(stat, val) {
-      this.inc(stat, val);
-    }
-  }
+  expireAfterTime: {
+    type: Number,
+  },
+//  modifiedAt: {
+//    type: Date,
+//  },
+//  events: {
+//    beforeChange: function(e) {
+//      this.set('modifiedAt', Date.now());
+//    }
+//  },
+//  methods: {
+//    incrementStatBy: function(stat, val) {
+//      this.inc(stat, val);
+//    }
+//  }
 });
