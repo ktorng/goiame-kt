@@ -297,7 +297,7 @@ Template.lobby.events({
   'click .btn-start': function() {
     //GAnalytics.event("game-actions", "gamestart");
 
-    let game = getCurrentGame();
+    const game = getCurrentGame();
     Meteor.call('changeGameState', game._id, 'settingUp');
   },
   'click .btn-remove-player': function() {

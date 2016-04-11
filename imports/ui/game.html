@@ -49,17 +49,21 @@
 <template name="targets">
   <div class="status-container">
     <div class="status-container-content">
-      <div class="enemy">
-        <ol class="game-menu-list">
-          <li>Name: {{ nemesis.name }}</li>
-          <li>HP: {{ nemesis.stats.health }}</li>
-          <li>STR: {{ nemesis.stats.str }}</li>
-          <li>DEX: {{ nemesis.stats.dex }}</li>
-          <li>INT: {{ nemesis.stats.intel }}</li>
-          <li>ACC: {{ nemesis.stats.acc }}</li>
-          <li>SPD: {{ nemesis.stats.spd }}</li>
-        </ol>
-      </div>
+      <ol class="lobby-player-list">
+        {{#each enemies}}
+          <li class="enemy {{selectedClass}}">
+          {{ enemy.name }}
+          {{#if showSelectedEnemy}}
+            HP: {{ showSelectedEnemy.stats.health }}<br>
+            STR: {{ showSelectedEnemy.stats.str }}<br>
+            DEX: {{ showSelectedEnemy.stats.dex }}<br>
+            INT: {{ showSelectedEnemy.stats.intel }}<br>
+            ACC: {{ showSelectedEnemy.stats.acc }}<br>
+            SPD: {{ showSelectedEnemy.stats.spd }}<br>
+          {{/if}}
+          </li>
+        {{/each}}
+      </ol>
     </div>
   </div>
 </template>

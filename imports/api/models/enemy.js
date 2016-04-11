@@ -24,7 +24,11 @@ Enemy = Astro.Class({
     //   optional: true
     // },
     location: {
-      type: 'string'
+      type: 'string',
+    },
+    isNemesis: {
+      type: 'boolean',
+      default: false,
     },
     stats: {
       type: 'object',

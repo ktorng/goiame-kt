@@ -75,23 +75,46 @@ Template.instructions.events({
 });
 
 Template.character.helpers({
-  game: function() {
+  game() {
     return getCurrentGame();
   },
-  player: function() {
+  player() {
     return getCurrentPlayer();
   },
-  players: function() {
+  players() {
     var game = getCurrentGame();
-    return Players.find({'gameID': game._id}); 
+    return Players.find({'gameId': game._id}); 
   },
 });
 
 Template.targets.helpers({
-  game: function() {
+  game() {
     return getCurrentGame();
   },
-  nemesis: function() {
+  enemy() {
+    return Enemies.findOne(this._id);
+  },
+  enemies() {
+    const game = getCurrentGame();
+    return Enemies.find({'gameId': game._id}); 
+  },
+  nemesis() {
     return Enemies.findOne();
+  },
+  selectedClass() {
+    const selectedEnemy = Session.get('selectedEnemy');
+    if (this._id == selectedEnemy) {
+      return "selected"
+    }
+  },
+  showSelectedEnemy() {
+    const selectedEnemy = Session.get('selectedEnemy');
+    return Enemies.findOne(selectedEnemy);
+  },
+});
+
+Template.targets.events({
+  'click .enemy'() {
+    Session.set('selectedEnemy', this._id);
   },
 });
