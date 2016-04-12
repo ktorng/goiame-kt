@@ -51,7 +51,7 @@ Template.gameButtons.events({
   },
   'click .btn-inventory': function () {
    console.log(Players.findOne());
-   console.log(Enemies.findOne());
+   console.log(Enemies.find().fetch());
   },
   'click .btn-game-menu': function () {
     BlazeLayout.render("main", { content: "gameMenu" });
@@ -107,9 +107,8 @@ Template.targets.helpers({
       return "selected"
     }
   },
-  showSelectedEnemy() {
-    const selectedEnemy = Session.get('selectedEnemy');
-    return Enemies.findOne(selectedEnemy);
+  isSelectedEnemy() {
+    return this._id === Session.get('selectedEnemy');
   },
 });
 

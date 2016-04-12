@@ -76,11 +76,8 @@ trackMenuState = function() {
 
   if (game.state === "inProgress") {
     BlazeLayout.render("main", { content: "gameView", footer: "gameButtons" });
-    //BlazeLayout.render("main", { content: "gameView" });
-    console.log(game.state);
   } else if (game.state === "waitingForPlayers") {
     BlazeLayout.render("main", { content: "lobby" });
-    console.log(game.state);
   }
 }
 
@@ -161,16 +158,13 @@ Template.createGame.events({
 
     Meteor.call('generateNewGame', accessCode, function(error, gameId) {
       Session.set('gameId', gameId);
-      console.log(Session.get('gameId'));
       Meteor.subscribe('games', accessCode);
       Meteor.subscribe('players', gameId);
       Meteor.subscribe('enemies', gameId);
       //Session.set("loading", true);
       Meteor.call('generateNewPlayer', gameId, playerName, function(error, playerId) {
         Session.set('playerId', playerId);
-      //  Meteor.subscribe('players', Session.get('gameId'), function() {
-      //    Session.set("loading", false);
-      //  });
+      //  Session.set("loading", false);
       });
     });
 

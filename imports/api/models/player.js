@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
+import './attributes/actions.js';
 import './attributes/stat.js';
 import './attributes/modifier.js';
 
@@ -40,6 +41,10 @@ Players.attachSchema(new SimpleSchema({
   location: {
     type: String,
     optional: true,
+  },
+  actions: {
+    type: [Actions],
+    defaultValue: [],
   },
   stats: {
     type: Stats,
