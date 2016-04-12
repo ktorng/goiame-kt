@@ -28,3 +28,4 @@ mrt:flash-messages
 standard-minifier-css
 standard-minifier-js
 less
+aldeed:simple-schema

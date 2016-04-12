@@ -1,19 +1,27 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
-Modifiers = new SimpleSchema({
+Actions = new SimpleSchema({
+  name: {
+    type: String,
+  },
   type: {
-    type: 'string',
+    type: String,
     allowedValues: [
-      'Defense Down',
-      'Defense Down',
-      'Slow',
+      'melee',
+      'ranged',
+      'spell',
+      'movement',
     ],
   },
-  value: {
+  isStarter: {
+    type: Boolean,
+    defaultValue: false,
+  },
+  timeCool: {
     type: Number,
   },
-  expireAfterTime: {
+  timeCharge: {
     type: Number,
   },
 //  modifiedAt: {

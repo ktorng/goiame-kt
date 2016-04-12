@@ -3,6 +3,47 @@ import { Meteor } from 'meteor/meteor';
 import { Games } from '../../api/models/game.js';
 import { Players } from '../../api/models/player.js';
 
+export const test_prawn = []
+
+var actions_list = [
+  {
+    name: 'attack',
+    type: 'melee',
+    timeCool: 10,
+    timeCharge: 0
+  },
+  {
+    name: 'shoot',
+    type: 'ranged',
+    timeCool: 0,
+    timeCharge: 10
+  },
+  {
+    name: 'fireball',
+    type: 'spell',
+    timeCool: 0,
+    timeCharge: 30
+  },
+]
+
+var locations_list = [
+  {
+    name: 'Headquarters',
+  },
+  {
+    name: 'Library',
+  },
+  {
+    name: 'Police Station',
+  },
+  {
+    name: 'Restaurant',
+  },
+  {
+    name: 'Hospital',
+  },
+]
+
 Meteor.startup(function() {
   // Delete all games and players at startup
   Games.remove({});
