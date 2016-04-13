@@ -4,7 +4,7 @@ import { Games } from './models/game.js';
 import { Players } from './models/player.js';
 import { Enemies } from './models/enemy.js';
 
-import { test_prawn } from '/../startup/server/fixtures.js';
+//import { test_prawn } from '../startup/server/fixtures.js';
 import { actions_list } from './models/lists.js';
 
 Meteor.methods({
