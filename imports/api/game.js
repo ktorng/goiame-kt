@@ -28,9 +28,12 @@ Enemies.find( { "stats.currentHealth": { $lte: 0 } } ).observe({
 // Enemy turn
 Enemies.find( { "isTurn": true } ).observe({
   added: function(enemy) {
-    playersInLocation = Players.find({'gameId': enemy.gameId}).fetch();
+    // If there are players in current location, choose one  
+    playersInLocation = Players.find({'gameId': enemy.gameId, 'location': enemy.location}).fetch();
     if (playersInLocation.length > 0) {
       chosenTarget = shuffleArray(playersInLocation)[0];
+
+      // Choose an action 
       availableActions = enemy.actions.filter(function(a) {
         //return a.type != 'movement';
         return a.type == 'melee';
@@ -40,7 +43,7 @@ Enemies.find( { "isTurn": true } ).observe({
       let game = Games.findOne(enemy.gameId);
       const attackTime = calcTimeReq(enemy, chosenAction.timeCool);
       const attackDamage = calcDamage(enemy, chosenAction.damage, chosenAction.type);
-      const log = 'Day ' + enemy.gameTime + ': ' + enemy.name + ' attacked '
+      const log = 'Day ' + Math.round(enemy.gameTime) + ': ' + enemy.name + ' attacked '
         + chosenTarget.name + ' for ' + attackDamage + ' damage!';
 
       Meteor.call('pushToLog', game, log);

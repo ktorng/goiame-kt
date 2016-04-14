@@ -25,6 +25,7 @@ Players.attachSchema(new SimpleSchema({
   gameTime: {
     type: Number,
     defaultValue: 0,
+    decimal: true,
   },
   gender: {
     type: String,

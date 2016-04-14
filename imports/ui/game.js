@@ -61,6 +61,10 @@ Template.gameStatus.helpers({
   game: function() {
     return getCurrentGame();
   },
+  gameTime: function() {
+    const game = getCurrentGame();
+    return Math.round(game.gameTime);
+  },
   player: function() {
     return getCurrentPlayer();
   },
@@ -187,7 +191,7 @@ Template.targets.events({
     const attack = getActionByName(player.actions, 'attack'); 
     const attackTime = calcTimeReq(player, attack.timeCool);
     const attackDamage = calcDamage(player, attack.damage, attack.type);
-    const log = 'Day ' + player.gameTime + ': ' + player.name + ' attacked '
+    const log = 'Day ' + Math.round(player.gameTime) + ': ' + player.name + ' attacked '
       + target.name + ' for ' + attackDamage + ' damage!';
 
     Meteor.call('pushToLog', game, log);

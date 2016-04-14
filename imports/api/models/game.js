@@ -22,5 +22,10 @@ Games.attachSchema(new SimpleSchema({
   gameTime: {
     type: Number,
     defaultValue: 0,
+    decimal: true,
+  },
+  count: {
+    type: Number,
+    defaultValue: 1,
   },
 }));

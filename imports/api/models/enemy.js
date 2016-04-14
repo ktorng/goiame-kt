@@ -23,6 +23,7 @@ Enemies.attachSchema(new SimpleSchema({
   gameTime: {
     type: Number,
     defaultValue: 10,
+    decimal: true,
   },
   location: {
     type: String,

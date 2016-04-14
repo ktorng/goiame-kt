@@ -18,10 +18,13 @@ Meteor.methods({
     return gameId;
   },
   'generateNewPlayer'(gameId, name) {
+    let count = Games.findOne(gameId).count
     const playerId = Players.insert({
       gameId: gameId,
       name: name,
+      gameTime: count / 1000,
     });
+    Games.update(gameId, {$inc: {'count': 1}});
 
     return playerId;
   },
@@ -67,6 +70,7 @@ Meteor.methods({
 
   // Generate enemy Nemesis
   'generateNemesis'(gameId) {
+    let count = Games.findOne(gameId).count
     const nemesisActions = actions_list.filter(function(action) {
       return action.isNemesis == true;
     });
@@ -75,7 +79,7 @@ Meteor.methods({
       gameId: gameId,
       name: 'Nemesis-BIGUBOSU',
       'location': 'Headquarters',
-      'gameTime': 20,
+      'gameTime': count / 1000,
       'isNemesis': true,
       'actions': nemesisActions,
       'stats': {
@@ -86,10 +90,12 @@ Meteor.methods({
         'spd': Math.round(80 + 40 * Math.random()),
       },
     });
+    Games.update(gameId, {$inc: {'count': 1}});
   },
   
   // Generate enemies at beginning of game
   'generateEnemies'(gameId) {
+    let count = Games.findOne(gameId).count
     const starterActions = actions_list.filter(function(action) {
       return action.isStarter == true;
     });
@@ -100,6 +106,7 @@ Meteor.methods({
         gameId: gameId,
         name: 'Slime-' + i,
         'location': 'Headquarters',
+        'gameTime': count / 1000,
         'isNemesis': false,
         'actions': starterActions,
         'stats': {
@@ -112,6 +119,7 @@ Meteor.methods({
           'spd': Math.round(50 + 20 * Math.random()),
         },
       });
+    Games.update(gameId, {$inc: {'count': 1}});
     }
   },
 
