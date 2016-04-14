@@ -18,6 +18,10 @@ Actions = new SimpleSchema({
     type: Boolean,
     defaultValue: false,
   },
+  isNemesis: {
+    type: Boolean,
+    defaultValue: false,
+  },
   timeCool: {
     type: Number,
   },

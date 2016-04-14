@@ -65,11 +65,16 @@ Meteor.methods({
 
   // Generate enemy Nemesis
   'generateNemesis'(gameId) {
+    const nemesisActions = actions_list.filter(function(action) {
+      return action.isNemesis == true;
+    });
+
     Enemies.insert({
       gameId: gameId,
       name: 'Bigubosu',
       'location': 'Headquarters',
       'isNemesis': true,
+      'actions': nemesisActions,
       'stats': {
         'str': Math.round(50 + 100 * Math.random()),
         'dex': Math.round(50 + 100 * Math.random()),

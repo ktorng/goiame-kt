@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
+import './attributes/actions.js';
 import './attributes/stat.js';
 import './attributes/modifier.js';
 
@@ -25,6 +26,10 @@ Enemies.attachSchema(new SimpleSchema({
   isNemesis: {
     type: Boolean,
     defaultValue: false,
+  },
+  actions: {
+    type: [Actions],
+    defaultValue: [],
   },
   stats: {
     type: Stats,

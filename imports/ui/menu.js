@@ -7,52 +7,8 @@ import { Players } from '../api/models/player.js';
 
 import './menu.html';
 import './game.html';
+import './helpers.js';
 import '../api/methods.js';
-
-generateAccessCode = function() {
-  let code = "";
-  const possible = "abcdefghijklmnopqrstuvwxyz";
-  
-  for(let i=0; i<5; i++){
-    code += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return code;
-}
-
-getAccessLink = function() {
-  const game = getCurrentGame();
-
-  if (!game){
-    return;
-  }
-
-  return Meteor.settings.public.url + game.accessCode + "/";
-}
-
-getCurrentPlayer = function() {
-  let playerId = Session.get("playerId");
-
-  if(playerId) {
-    return Players.findOne(playerId);
-  }
-}
-
-getCurrentGame = function() {
-  let gameId = Session.get("gameId");
-
-  if(gameId) {
-    return Games.findOne(gameId);
-  }
-}
-
-resetUserState = function() {
-  let player = getCurrentPlayer();
-  if(player) {
-    Meteor.call('removePlayer', player._id);
-  }
-  Session.set("gameId", null);
-  Session.set("playerId", null);
-}
 
 trackMenuState = function() {
   let gameId = Session.get("gameId");
@@ -80,23 +36,6 @@ trackMenuState = function() {
     BlazeLayout.render("main", { content: "lobby" });
   }
 }
-
-leaveGame = function() {
-  //GAnalystics.event("game-actions", "gameLeave");
-  let player = getCurrentPlayer();
-  BlazeLayout.render("main", { content: "startMenu" });
-  Meteor.call('removePlayer', player._id);
-  Session.set("playerId", null);
-}
-
-
-function hasHistoryApi() {
-  return !!(window.history && window.history.pushState);
-}
-
-Meteor.setInterval(function() {
-  Session.set('time', new Date());
-}, 1000);
 
 if(hasHistoryApi()) {
   function trackUrlState() {

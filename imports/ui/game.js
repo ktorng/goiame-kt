@@ -7,6 +7,7 @@ import { Players } from '../api/models/player.js';
 import { Enemies } from '../api/models/enemy.js';
 
 import './game.html';
+import './helpers.js';
 import '../api/methods.js';
 
 trackGameState = function() {
@@ -110,10 +111,25 @@ Template.targets.helpers({
   isSelectedEnemy() {
     return this._id === Session.get('selectedEnemy');
   },
+  playerTimeReq() {
+    return actionTimeReq('player', Session.get('selectedAction'))[1];  
+  },
+  coolOrCharge() {
+    return actionTimeReq('player', Session.get('selectedAction'))[0];  
+  },
 });
 
 Template.targets.events({
   'click .enemy'() {
     Session.set('selectedEnemy', this._id);
+  },
+  'click .btn-attack'() {
+    Session.set('selectedAction', 'attack');
+    $('#attack-modal').modal();
+  },
+  'click #confirm-attack'() {
+    let player = getCurrentPlayer();
+    let target = this;
+
   },
 });
