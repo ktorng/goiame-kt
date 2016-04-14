@@ -1,13 +1,22 @@
 import { Meteor } from 'meteor/meteor';
+
 import { Games } from './models/game.js';
+import { Players } from './models/player.js';
+import { Enemies } from './models/enemy.js';
 
 import './methods.js';
 
-Games.find({"state": 'settingUp'}).observeChanges({
+Games.find( { "state": 'settingUp' } ).observeChanges({
   added: function(id, game) {
     Meteor.call('gameSetup', id, function(err, res) {
       Meteor.call('changeGameState', id, 'inProgress');
     });
+  }
+});
+
+Enemies.find( { "stats.currentHealth": { $lte: 0 } } ).observeChanges({
+  added: function(id, enemy) {
+    Meteor.call('removeEnemy', id);
   }
 });
 

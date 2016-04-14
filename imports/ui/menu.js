@@ -10,7 +10,7 @@ import './game.html';
 import './helpers.js';
 import '../api/methods.js';
 
-trackMenuState = function() {
+trackMenuState = function(comp) {
   let gameId = Session.get("gameId");
   let playerId = Session.get("playerId");
 
@@ -36,10 +36,12 @@ trackMenuState = function() {
       content: "gameView",
       footer: "gameButtons",
     });
+    comp.stop();
   } else if (game.state === "waitingForPlayers") {
     BlazeLayout.render("main", { content: "lobby" });
   }
 }
+Tracker.autorun(trackMenuState);
 
 if(hasHistoryApi()) {
   function trackUrlState() {
@@ -59,10 +61,6 @@ if(hasHistoryApi()) {
   }
   Tracker.autorun(trackUrlState);
 }
-
-
-Tracker.autorun(trackMenuState);
-
 
 window.onbeforeunload = resetUserState;
 window.onpagehide = resetUserState;

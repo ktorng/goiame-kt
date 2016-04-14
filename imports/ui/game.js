@@ -168,13 +168,15 @@ Template.targets.events({
     const attackTime = calcTimeReq(player, attack.timeCool);
     const attackDamage = calcDamage(player, attack.damage, attack.type);
 
-    Meteor.call('playerAction', player, target, attackDamage, attackTime, function(err, res) {
-      moveHealthBar(target.name, 50); 
-    });
-    console.log(player);
-    console.log(target);
-    console.log(attack);
-    console.log(attackTime);
-    console.log(attackDamage);
+    Meteor.call('damageTarget', target, attackDamage);
+    Meteor.call('endTurn', player, attackTime);
+//    Meteor.call('playerAction', player, target, attackDamage, attackTime, function(err, res) {
+//      moveHealthBar(target.name, 50); 
+//    });
+//    console.log(player);
+//    console.log(target);
+//    console.log(attack);
+//    console.log(attackTime);
+//    console.log(attackDamage);
   },
 });

@@ -28,6 +28,9 @@ Meteor.methods({
   'removePlayer'(playerId) {
     Players.remove(playerId);
   },
+  'removeEnemy'(enemyId) {
+    Enemies.remove(enemyId);
+  },
   'changeGameState'(gameId, state) {
     Games.update(gameId, {$set: {'state': state}});
   },
@@ -101,6 +104,8 @@ Meteor.methods({
         'isNemesis': false,
         'actions': starterActions,
         'stats': {
+          'currentHealth': 20,
+          'maxHealth': 20,
           'str': Math.round(20 + 20 * Math.random()),
           'dex': Math.round(20 + 20 * Math.random()),
           'intel': Math.round(10 + 10 * Math.random()),
@@ -111,13 +116,15 @@ Meteor.methods({
     }
   },
 
-  // Do action
-  'playerAction'(player, target, damage, time) {
+  'damageTarget'(target, damage) {
     Enemies.update(target._id, {
       $inc: {
         'stats.currentHealth': -damage,
       },
     });
+  },
+
+  'endTurn'(player, time) {
     Players.update(player._id, {
       $inc: {
         'gameTime': time, 
@@ -126,6 +133,10 @@ Meteor.methods({
         'isTurn': false,
       },
     });
+  },
+
+  'dummy'(){
+    console.log('dummy method called');
   }
 });
 
