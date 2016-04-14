@@ -31,7 +31,11 @@ trackMenuState = function() {
   
 
   if (game.state === "inProgress") {
-    BlazeLayout.render("main", { content: "gameView", footer: "gameButtons" });
+    BlazeLayout.render("main", {
+      top: "gameStatus",
+      content: "gameView",
+      footer: "gameButtons",
+    });
   } else if (game.state === "waitingForPlayers") {
     BlazeLayout.render("main", { content: "lobby" });
   }

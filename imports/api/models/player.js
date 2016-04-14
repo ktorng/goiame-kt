@@ -22,6 +22,10 @@ Players.attachSchema(new SimpleSchema({
     type: Number,
     optional: true,
   },
+  gameTime: {
+    type: Number,
+    defaultValue: 0,
+  },
   gender: {
     type: String,
     optional: true,

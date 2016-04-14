@@ -2,6 +2,10 @@ import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
 Stats = new SimpleSchema({
+    level: {
+      type: Number,
+      defaultValue: 1,
+    },
     str: {
       type: Number,
       defaultValue: 100,
@@ -14,7 +18,11 @@ Stats = new SimpleSchema({
       type: Number,
       defaultValue: 100,
     },
-    health: {
+    currentHealth: {
+      type: Number,
+      defaultValue: 100,
+    },
+    maxHealth: {
       type: Number,
       defaultValue: 100,
     },

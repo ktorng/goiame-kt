@@ -22,11 +22,23 @@ Actions = new SimpleSchema({
     type: Boolean,
     defaultValue: false,
   },
+  isRecharged: {
+    type: Boolean,
+    optional: true,
+  },
+  damage: {
+    type: Number,
+    optional: true,
+  },
   timeCool: {
     type: Number,
   },
   timeCharge: {
     type: Number,
+  },
+  timeRecharge: {
+    type: Number,
+    optional: true,
   },
 //  modifiedAt: {
 //    type: Date,

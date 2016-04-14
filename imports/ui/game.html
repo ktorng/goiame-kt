@@ -1,18 +1,30 @@
 <template name="gameView">
-  <h4><a class="nemesis-countdown {{#if arrived }}arrived{{/if}} {{#if game.paused }}paused{{/if}}">{{ timeRemaining }}</a></h4>
 
   <div class="status-container">
     <div class="status-container-content">
+      {{#if isStart }}
+        It is day 0! What do?  
+      {{/if}}
+    </div>
+  </div>
+</template>
+
+<template name="gameStatus">
+  <div class="game-status-container">
+    <div class="status-container-content">
+      <!--
+      <h4><a class="nemesis-countdown {{#if arrived }}arrived{{/if}} {{#if game.paused }}paused{{/if}}">{{ timeRemaining }}</a></h4>
+      -->
+
       <div class="game-time">
-        Game Time: {{game.gameTime}}
+        Day: {{game.gameTime}}
       </div>      
 
       {{#if player.isTurn }}
-        <div class="player-status player-status-turn">it is your turn</div>
+        <div class="player-status player-status-turn">It is your turn</div>
       {{else}}
-        <div class="player-status player-status-notturn">it is not your turn</div>
+        <div class="player-status player-status-notturn">It is not your turn</div>
       {{/if}}
-
 
       <div class="current-location-name">
         You are at: {{ player.location }}
@@ -20,6 +32,7 @@
     </div>
   </div>
 </template>
+
 
 <template name="gameButtons">
   <div class="button-container">
@@ -38,7 +51,8 @@
       <div class="player">
         <ol class="game-menu-list">
           <li>Name: {{ player.name }}</li>
-          <li>HP: {{ player.stats.health }}</li>
+          <li>Level: {{ player.stats.level }}</li>
+          <li>HP: {{ player.stats.currentHealth }}/{{ player.stats.maxHealth }}</li>
           <li>STR: {{ player.stats.str }}</li>
           <li>DEX: {{ player.stats.dex }}</li>
           <li>INT: {{ player.stats.intel }}</li>
@@ -53,38 +67,47 @@
 <template name="targets">
   <div class="status-container">
     <div class="status-container-content">
-      <ol class="lobby-player-list">
+      <ol class="game-target-list">
         {{#each enemies}}
           <li class="enemy {{selectedClass}}">
-          {{ enemy.name }}
-          {{#if isSelectedEnemy}}
-            HP: {{ enemy.stats.health }}<br>
-            STR: {{ enemy.stats.str }}<br>
-            DEX: {{ enemy.stats.dex }}<br>
-            INT: {{ enemy.stats.intel }}<br>
-            ACC: {{ enemy.stats.acc }}<br>
-            SPD: {{ enemy.stats.spd }}<br>
-            <button class="btn-inspect">inspect</button>
-            <button class="btn-attack" href="#" data-toggle="modal">
-              attack
-            </button>
-
-            <div class="modal" id="attack-modal">
-              <div class="modal-content">
-                Attack {{ enemy.name }}?<br>
-                This action will take {{ playerTimeReq }} days to {{ coolOrCharge }}.<br>
-                <button type="button" id="confirm-attack">
-                  OK
-                </button>
-                <button type="button" id="cancel-attack" data-dismiss="modal">
-                  Cancel
-                </button>
+            <strong>{{ enemy.name }}</strong>
+            <div class="health-bar">
+              <div class="health-bar-glass">
+                <div class="health-bar-fluid anim-width" id="health-bar {{enemy.name}}">
+                  <strong>HP: {{ enemy.stats.currentHealth }}/{{ enemy.stats.maxHealth }}</strong>
+                </div>
               </div>
             </div>
+            {{#if isSelectedEnemy}}
+              <br>
+              {{#if isInspectedEnemy}}
+                STR: {{ enemy.stats.str }}<br>
+                DEX: {{ enemy.stats.dex }}<br>
+                INT: {{ enemy.stats.intel }}<br>
+                ACC: {{ enemy.stats.acc }}<br>
+                SPD: {{ enemy.stats.spd }}<br>
+              {{/if}}
+              <button class="btn-inspect">inspect</button>
+              <button class="btn-attack" href="#" data-toggle="modal">
+                attack
+              </button>
 
-            <button class="btn-item">item</button>
-            <button class="btn-skill">skill</button>
-          {{/if}}
+              <div class="modal" id="attack-modal">
+                <div class="modal-content">
+                  Attack {{ enemy.name }}?<br>
+                  This action will take approximately {{ playerTimeReq }} days to {{ coolOrCharge }}.<br>
+                  <button type="button" id="confirm-attack">
+                    OK
+                  </button>
+                  <button type="button" id="cancel-attack" data-dismiss="modal">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+
+              <button class="btn-item">item</button>
+              <button class="btn-skill">skill</button>
+            {{/if}}
           </li>
         {{/each}}
       </ol>

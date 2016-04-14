@@ -61,6 +61,7 @@ Meteor.methods({
     });
 
     Meteor.call('generateNemesis', gameId);
+    Meteor.call('generateEnemies', gameId);
   },
 
   // Generate enemy Nemesis
@@ -71,7 +72,7 @@ Meteor.methods({
 
     Enemies.insert({
       gameId: gameId,
-      name: 'Bigubosu',
+      name: 'Nemesis-BIGUBOSU',
       'location': 'Headquarters',
       'isNemesis': true,
       'actions': nemesisActions,
@@ -84,4 +85,47 @@ Meteor.methods({
       },
     });
   },
+  
+  // Generate enemies at beginning of game
+  'generateEnemies'(gameId) {
+    const starterActions = actions_list.filter(function(action) {
+      return action.isStarter == true;
+    });
+    const playerCount = Players.find({gameId: gameId}).count();
+
+    for (let i = 0; i < playerCount; i++) {
+      Enemies.insert({
+        gameId: gameId,
+        name: 'Slime-' + i,
+        'location': 'Headquarters',
+        'isNemesis': false,
+        'actions': starterActions,
+        'stats': {
+          'str': Math.round(20 + 20 * Math.random()),
+          'dex': Math.round(20 + 20 * Math.random()),
+          'intel': Math.round(10 + 10 * Math.random()),
+          'acc': Math.round(50 + 40 * Math.random()),
+          'spd': Math.round(50 + 20 * Math.random()),
+        },
+      });
+    }
+  },
+
+  // Do action
+  'playerAction'(player, target, damage, time) {
+    Enemies.update(target._id, {
+      $inc: {
+        'stats.currentHealth': -damage,
+      },
+    });
+    Players.update(player._id, {
+      $inc: {
+        'gameTime': time, 
+      },
+      $set: {
+        'isTurn': false,
+      },
+    });
+  }
 });
+

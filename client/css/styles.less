@@ -175,6 +175,44 @@ a {
     list-style:none; /* Disable the normal item numbering */
 }
 
+.game-target-list {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    counter-reset:li; /* Initiate a counter */
+    margin-left:0; /* Remove the default left margin */
+    padding-left:0; /* Remove the default left padding */
+}
+
+.game-target-list > li {
+    text-align: left;
+    position:relative; /* Create a positioning context */
+    margin:0 0 6px 2em; /* Give each list item a left margin to make room for the numbers */
+    padding:4px 8px; /* Add some spacing around the content */
+    list-style:none; /* Disable the normal item numbering */
+    background:transparent;
+    background-color: #f9f9f9;
+}
+
+.game-target-list > li:before {
+    content:counter(li); /* Use the counter as content */
+    counter-increment:li; /* Increment the counter by 1 */
+    /* Position and style the number */
+    position:absolute;
+    top:0;
+    left:-2em;
+    -moz-box-sizing:border-box;
+    -webkit-box-sizing:border-box;
+    box-sizing:border-box;
+    width:2em;
+    margin-right:8px;
+    padding: 5px 4px 3px 4px;
+    background:transparent;
+    font-weight:bold;
+    font-family:"Helvetica Neue", Arial, sans-serif;
+    text-align:center;
+    background-color: #f9f9f9;
+}
+
 .lobby-player-list {
     margin-top: -15px;
     margin-bottom: -10px;
@@ -272,18 +310,24 @@ a {
 
 .player-status {
     text-align: center;
-    font-size: 1.5em;
+    font-size: 1em;
 }
 
 .player-status-not-spy {
     margin-bottom: 0;
 }
 
+.game-status-container {
+    border-top: 1px solid #E1E1E1;
+    position: relative;
+    margin-bottom: 3rem;
+}
+
 .status-container {
     border-top: 1px solid #E1E1E1;
     border-bottom: 1px solid #E1E1E1;
     position: relative;
-    min-height: 400px;
+    min-height: 300px;
     margin-bottom: 3rem;
 }
 
@@ -453,4 +497,52 @@ input[type="text"] {
   padding: 20px;
   border: 2px solid black;
   width: 50%;
+}
+
+.health-bar {
+  position: relative;
+  float: right;
+  display: inline-block;
+  margin: 0;
+}
+
+.health-bar-glass {
+  display: inline-block;
+  width: 150px;
+  height: 20px;
+  z-index: 10;
+  border: 2px solid #000000;
+  box-shadow: inset 0 0 0 2px #dbd75d;
+  font-size: 0.75em;
+  text-align: center;
+}
+
+.health-bar-fluid {
+  height: 100%;
+  background: #d34549;
+  box-shadow: inset 0 3px 0 -1px #d3aa9a, inset 0 -4px 0 -2px #4d494d, inset 4px 0 0 -2px #4d494d, inset -4px 0 0 -2px #4d494d;
+}
+
+@-webkit-keyframes anim50to100 {
+  0% {
+    width: 100%;
+  }
+  50% {
+    width: 50%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes anim50to100 {
+  0% {
+    width: 100%;
+  }
+  50% {
+    width: 50%;
+  }
+  100% {
+    width: 100%;
+  }
 }

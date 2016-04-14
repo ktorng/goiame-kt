@@ -2,10 +2,11 @@ export const actions_list = [
   {
     name: 'attack',
     type: 'melee',
+    damage: 10,
     isStarter: true,
     isNemesis: false,
     timeCool: 10,
-    timeCharge: 0
+    timeCharge: 0,
   },
   {
     name: 'move',
@@ -13,15 +14,16 @@ export const actions_list = [
     isStarter: true,
     isNemesis: false,
     timeCool: 0,
-    timeCharge: 30
+    timeCharge: 30,
   },
   {
     name: 'nemesisAttack',
     type: 'melee',
+    damage: 10,
     isStarter: false,
     isNemesis: true,
     timeCool: 5,
-    timeCharge: 0
+    timeCharge: 0,
   },
   {
     name: 'nemesisMove',
@@ -29,23 +31,29 @@ export const actions_list = [
     isStarter: false,
     isNemesis: true,
     timeCool: 0,
-    timeCharge: 15
+    timeCharge: 15,
   },
   {
     name: 'shoot',
     type: 'ranged',
-    isStarter: false,
+    damage: 8,
+    isStarter: true,
     isNemesis: false,
+    isRecharged: true,
     timeCool: 0,
-    timeCharge: 10
+    timeCharge: 5,
+    timeRecharge: 20,
   },
   {
     name: 'fireball',
     type: 'spell',
+    damage: 20,
     isStarter: false,
     isNemesis: false,
+    isRecharged: true,
     timeCool: 0,
-    timeCharge: 30
+    timeCharge: 15,
+    timeRecharge: 30,
   },
 ]
 

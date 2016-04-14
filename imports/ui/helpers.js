@@ -82,6 +82,39 @@ getActionByName = function(list, name) {
   )[0];
 }
 
+// Calculate damage of action
+// current includes str/dex/int and random factor
+// need modifiers later on
+calcDamage = function(current, baseDamage, type) {
+  const meleeStat = (current.stats.str + 0.5 * current.stats.dex)/100;
+  const rangedStat = (0.5 * current.stats.str + current.stats.dex)/100;
+  const spellStat = current.stats.intel/100;
+  const randomFactor = 0.9 + 0.2 * Math.random();
+  if (type == 'melee') {
+    return Math.round(baseDamage * meleeStat * randomFactor); 
+  } else if (type == 'ranged') {
+    return Math.round(baseDamage * rangedStat * randomFactor); 
+  } else if (type == 'spell') {
+    return Math.round(baseDamage * spellStat * randomFactor); 
+  }
+}
+
+// Calculate time to do action
+// current includes spd factor and random factor
+// need modifiers later on
+calcTimeReq = function(current, baseTime) {
+  const spdStat = 100/current.stats.spd;
+  const randomFactor = Math.random() - 0.5;
+  return Math.round(baseTime * spdStat + randomFactor); 
+}
+
+// Calculate time to do action
+// for confirm attack window approx
+calcTimeReqNoRand = function(player, baseTime) {
+  const spdStat = 100/player.stats.spd;
+  return Math.round(baseTime * spdStat); 
+}
+
 // Returns an array that specifies whether action is a charge or cool
 // and how much time it requires
 actionTimeReq = function(playerOrEnemy, actionName) {
@@ -99,11 +132,26 @@ actionTimeReq = function(playerOrEnemy, actionName) {
 
   if (action.timeCool != 0) {
     coolOrCharge = 'cooldown';
-    timeReq = action.timeCool;
+    timeReq = calcTimeReqNoRand(current, action.timeCool);
   } else {
     coolOrCharge = 'charge';
-    timeReq = action.timeCharge;
+    timeReq = calcTimeReqNoRand(current, action.timeCharge);
   }
   
   return [coolOrCharge, timeReq];
+}
+
+moveHealthBar = function(enemy, percent) {
+  var elem = document.getElementById("health-bar " + enemy);   
+  var width = 10;
+  var id = setInterval(frame, 10);
+  function frame() {
+    if (width >= 100) {
+      clearInterval(id);
+    } else {
+      width++; 
+      elem.style.width = width + '%'; 
+//      document.getElementById("label").innerHTML = width * 1  + '%';
+    }
+  }
 }
