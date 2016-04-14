@@ -20,8 +20,16 @@ Enemies.attachSchema(new SimpleSchema({
     type: String,
     optional: true,
   },
+  gameTime: {
+    type: Number,
+    defaultValue: 10,
+  },
   location: {
     type: String,
+  },
+  isTurn: {
+    type: Boolean,
+    defaultValue: false,
   },
   isNemesis: {
     type: Boolean,

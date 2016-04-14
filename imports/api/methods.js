@@ -40,7 +40,6 @@ Meteor.methods({
   // Generate Nemesis
   'gameSetup'(gameId) {
     const players = Players.find({gameId: gameId});
-    const firstPlayerIndex = Math.floor(Math.random() * players.count());
     const starterActions = actions_list.filter(function(action) {
       return action.isStarter == true;
     });
@@ -48,7 +47,6 @@ Meteor.methods({
     players.forEach(function(player, index) {
       Players.update(player._id, {
         $set: {
-          'isTurn': index === firstPlayerIndex,
           'location': 'Headquarters',
           'actions': starterActions,
           'stats.str': Math.round(50 + 100 * Math.random()),
@@ -77,6 +75,7 @@ Meteor.methods({
       gameId: gameId,
       name: 'Nemesis-BIGUBOSU',
       'location': 'Headquarters',
+      'gameTime': 20,
       'isNemesis': true,
       'actions': nemesisActions,
       'stats': {
@@ -116,21 +115,72 @@ Meteor.methods({
     }
   },
 
-  'damageTarget'(target, damage) {
-    Enemies.update(target._id, {
-      $inc: {
-        'stats.currentHealth': -damage,
-      },
+  'damageTarget'(currentType, target, damage) {
+    if (currentType == 'player') {
+      Enemies.update(target._id, {
+        $inc: {
+          'stats.currentHealth': -damage,
+        },
+      });
+    } else {
+      Players.update(target._id, {
+        $inc: {
+          'stats.currentHealth': -damage,
+        },
+      });
+    }
+  },
+
+  'setGameTime'(gameId, time) {
+    Games.update(gameId, {
+      $set: {
+        'gameTime': time,
+      }
     });
   },
 
-  'endTurn'(player, time) {
-    Players.update(player._id, {
-      $inc: {
-        'gameTime': time, 
-      },
-      $set: {
-        'isTurn': false,
+  'setTurn'(currentType, id) {
+    if (currentType == 'player') {
+      Players.update(id, {
+        $set: {
+          'isTurn': true,
+        },
+      });
+    } else {
+      Enemies.update(id, {
+        $set: {
+          'isTurn': true,
+        },
+      });
+    }
+  },
+
+  'endTurn'(currentType, current, time) {
+    if (currentType == 'player') {
+      Players.update(current._id, {
+        $inc: {
+          'gameTime': time, 
+        },
+        $set: {
+          'isTurn': false,
+        },
+      });
+    } else {
+      Enemies.update(current._id, {
+        $inc: {
+          'gameTime': time, 
+        },
+        $set: {
+          'isTurn': false,
+        },
+      });
+    }
+  },
+
+  'pushToLog'(game, string) {
+    Games.update(game._id, {
+      $push: {
+        'log': string,
       },
     });
   },

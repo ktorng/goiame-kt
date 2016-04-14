@@ -11,18 +11,31 @@ import './helpers.js';
 import '../api/methods.js';
 
 trackGameState = function() {
+  let game = getCurrentGame();
+  let nextPlayer = _.min(Players.find().fetch(), function(player) {
+    return player.gameTime;
+  });
+  let nextEnemy = _.min(Enemies.find().fetch(), function(enemy) {
+    return enemy.gameTime;
+  });
+  let minTime = Math.min(nextPlayer.gameTime, nextEnemy.gameTime);
 
+
+
+  if (minTime) {
+    if (game.gameTime < minTime) {
+      if (nextPlayer.gameTime < nextEnemy.gameTime) {
+        Meteor.call('setTurn', 'player', nextPlayer._id);
+      } else {
+        Meteor.call('setTurn', 'enemy', nextEnemy._id);
+      }
+      Meteor.call('setGameTime', game._id, minTime);
+    }
+  }
 }
 
-Tracker.autorun(trackGameState);
-
-Template.body.onCreated(function bodyOnCreated() {
-  //Meteor.subscribe('games', function() {
-  //  console.log(Games.find().fetch()); 
-  //});
-});
-
 Template.gameView.onRendered(function() {
+  Tracker.autorun(trackGameState);
   var game = getCurrentGame();
   var player = getCurrentPlayer();
 });
@@ -30,13 +43,17 @@ Template.gameView.onRendered(function() {
 Template.gameView.helpers({
   isStart() {
     const game = getCurrentGame();
-    return game.gameTime == 0; 
+    return game.log.length == 0; 
   },
   game: function() {
     return getCurrentGame();
   },
   player: function() {
     return getCurrentPlayer();
+  },
+  log: function() {
+    game = getCurrentGame();
+    return game.log;
   },
 });
 
@@ -72,8 +89,10 @@ Template.gameButtons.events({
     });
   },
   'click .btn-inventory': function () {
+   console.log(Games.findOne());
    console.log(Players.findOne());
    console.log(Enemies.find().fetch());
+   console.log(findMinGameTime(Session.get('gameId')));
   },
   'click .btn-game-menu': function () {
     BlazeLayout.render("main", { content: "gameMenu" });
@@ -162,21 +181,17 @@ Template.targets.events({
   },
   'click #confirm-attack'() {
     $('#attack-modal').modal('hide');
+    let game = getCurrentGame();
     let player = getCurrentPlayer();
     let target = this;
     const attack = getActionByName(player.actions, 'attack'); 
     const attackTime = calcTimeReq(player, attack.timeCool);
     const attackDamage = calcDamage(player, attack.damage, attack.type);
+    const log = 'Day ' + player.gameTime + ': ' + player.name + ' attacked '
+      + target.name + ' for ' + attackDamage + ' damage!';
 
-    Meteor.call('damageTarget', target, attackDamage);
-    Meteor.call('endTurn', player, attackTime);
-//    Meteor.call('playerAction', player, target, attackDamage, attackTime, function(err, res) {
-//      moveHealthBar(target.name, 50); 
-//    });
-//    console.log(player);
-//    console.log(target);
-//    console.log(attack);
-//    console.log(attackTime);
-//    console.log(attackDamage);
+    Meteor.call('pushToLog', game, log);
+    Meteor.call('damageTarget', 'player', target, attackDamage);
+    Meteor.call('endTurn', 'player', player, attackTime);
   },
 });

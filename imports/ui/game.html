@@ -1,10 +1,14 @@
 <template name="gameView">
-
   <div class="status-container">
     <div class="status-container-content">
       {{#if isStart }}
         It is day 0! What do?  
       {{/if}}
+      <ul>
+      {{#each log }}
+        <li>{{ this }}</li>
+      {{/each }}
+      </ul>
     </div>
   </div>
 </template>

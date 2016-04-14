@@ -8,6 +8,10 @@ Games.attachSchema(new SimpleSchema({
   accessCode: {
     type: String,
   },
+  log: {
+    type: [String],
+    defaultValue: [],
+  },
   state: {
     type: String,
   },

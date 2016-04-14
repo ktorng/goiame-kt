@@ -5,18 +5,53 @@ import { Players } from './models/player.js';
 import { Enemies } from './models/enemy.js';
 
 import './methods.js';
+import '../ui/helpers.js';
 
-Games.find( { "state": 'settingUp' } ).observeChanges({
-  added: function(id, game) {
-    Meteor.call('gameSetup', id, function(err, res) {
-      Meteor.call('changeGameState', id, 'inProgress');
-    });
+if (Meteor.isServer) {
+  Games.find( { "state": 'settingUp' } ).observeChanges({
+    added: function(id, game) {
+      Meteor.call('gameSetup', id, function(err, res) {
+        Meteor.call('changeGameState', id, 'inProgress');
+      });
+    }
+  });
+}
+
+// Remove enemy when dead
+Enemies.find( { "stats.currentHealth": { $lte: 0 } } ).observe({
+  added: function(enemy) {
+    Meteor.call('pushToLog', Games.findOne(enemy.gameId), enemy.name + ' was defeated!'); 
+    Meteor.call('removeEnemy', enemy._id);
   }
 });
 
-Enemies.find( { "stats.currentHealth": { $lte: 0 } } ).observeChanges({
-  added: function(id, enemy) {
-    Meteor.call('removeEnemy', id);
+// Enemy turn
+Enemies.find( { "isTurn": true } ).observe({
+  added: function(enemy) {
+    playersInLocation = Players.find({'gameId': enemy.gameId}).fetch();
+    if (playersInLocation.length > 0) {
+      chosenTarget = shuffleArray(playersInLocation)[0];
+      availableActions = enemy.actions.filter(function(a) {
+        //return a.type != 'movement';
+        return a.type == 'melee';
+      });
+      chosenAction = shuffleArray(availableActions)[0];
+
+      let game = Games.findOne(enemy.gameId);
+      const attackTime = calcTimeReq(enemy, chosenAction.timeCool);
+      const attackDamage = calcDamage(enemy, chosenAction.damage, chosenAction.type);
+      const log = 'Day ' + enemy.gameTime + ': ' + enemy.name + ' attacked '
+        + chosenTarget.name + ' for ' + attackDamage + ' damage!';
+
+      Meteor.call('pushToLog', game, log);
+      Meteor.call('damageTarget', 'enemy', chosenTarget, attackDamage);
+      Meteor.call('endTurn', 'enemy', enemy, attackTime);
+
+    } else {
+      availableActions = enemy.actions.filter(function(a) {
+        return a.type == 'movement';
+      });
+    }
   }
 });
 
@@ -30,14 +65,4 @@ function cleanUp() {
   Players.remove({
     createdAt: {$lt: cutOff}
   });
-}
-
-function shuffleArray(a) {
-  var j, x, i;
-  for (i = a.length; i; i -= 1) {
-    j = Math.floor(Math.random() * i);
-    x = a[i - 1];
-    a[i - 1] = a[j];
-    a[j] = x;
-  }
 }

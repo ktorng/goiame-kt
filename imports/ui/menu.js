@@ -41,7 +41,6 @@ trackMenuState = function(comp) {
     BlazeLayout.render("main", { content: "lobby" });
   }
 }
-Tracker.autorun(trackMenuState);
 
 if(hasHistoryApi()) {
   function trackUrlState() {
@@ -84,6 +83,7 @@ Template.startMenu.rendered = function() {
   //GAnalytics.pageview("/");
 
   resetUserState();
+  Tracker.autorun(trackMenuState);
 }
 
 Template.createGame.events({

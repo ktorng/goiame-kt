@@ -40,7 +40,7 @@ Players.attachSchema(new SimpleSchema({
   },
   isTurn: {
     type: Boolean,
-    defaultValue: false,
+    defaultValue: true,
   },
   location: {
     type: String,

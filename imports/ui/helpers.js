@@ -5,9 +5,11 @@ import { Players } from '../api/models/player.js';
 import { Enemies } from '../api/models/enemy.js'; 
 
 
-Meteor.setInterval(function() {
-  Session.set('time', new Date());
-}, 1000);
+if (Meteor.isClient) {
+  Meteor.setInterval(function() {
+    Session.set('time', new Date());
+  }, 1000);
+}
 
 generateAccessCode = function() {
   let code = "";
@@ -154,4 +156,22 @@ moveHealthBar = function(enemy, percent) {
 //      document.getElementById("label").innerHTML = width * 1  + '%';
     }
   }
+}
+
+// Find min of all player and enemy gameTimes
+findMinGameTime = function(gameId) {
+  minPlayer = Players.find({gameId: gameId}, {sort: {'gameTime': 1}}, {limit: 1}).fetch()[0];
+  minEnemy = Enemies.find({gameId: gameId}, {sort: {'gameTime': 1}}, {limit: 1}).fetch()[0];
+  return Math.min(minPlayer.gameTime, minEnemy.gameTime);
+}
+
+shuffleArray = function(a) {
+  let j, x, i;
+  for (i = a.length; i; i -= 1) {
+    j = Math.floor(Math.random() * i);
+    x = a[i - 1];
+    a[i - 1] = a[j];
+    a[j] = x;
+  }
+  return a;
 }
