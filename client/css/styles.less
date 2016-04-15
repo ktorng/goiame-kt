@@ -106,7 +106,7 @@ a {
 .access-code {
     text-align: center;
     margin-top: -15px;
-    
+
     color: #666;
 }
 
@@ -168,10 +168,14 @@ a {
     color: black;
 }
 
+.game-time {
+    font-family: 'Lucida Console';
+    font-size: 24px;
+    font-weight: bold;
+}
+
 .game-menu-list > li {
     position:relative; /* Create a positioning context */
-    margin:0 0 6px 2em; /* Give each list item a left margin to make room for the numbers */
-    padding:4px 8px; /* Add some spacing around the content */
     list-style:none; /* Disable the normal item numbering */
 }
 
@@ -308,19 +312,10 @@ a {
     cursor: pointer;
 }
 
-.player-status {
-    text-align: center;
-    font-size: 1em;
-}
-
-.player-status-not-spy {
-    margin-bottom: 0;
-}
-
 .game-status-container {
     border-top: 1px solid #E1E1E1;
     position: relative;
-    margin-bottom: 3rem;
+    margin-bottom: 10px;
 }
 
 .status-container {
@@ -329,11 +324,17 @@ a {
     position: relative;
     min-height: 300px;
     margin-bottom: 3rem;
+    height: 300px;
+    overflow-y: auto;
 }
 
 .status-container-content {
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+.warning {
+    color: red;
 }
 
 .btn-toggle-status {
@@ -493,7 +494,7 @@ input[type="text"] {
 
 .modal-content {
   background-color: #fefefe;
-  margin: 40% auto;
+  margin: 20% auto;
   padding: 20px;
   border: 2px solid black;
   width: 50%;
@@ -519,7 +520,7 @@ input[type="text"] {
 
 .health-bar-fluid {
   height: 100%;
-  background: #d34549;
+  background: #00B200; //#d34549;
   box-shadow: inset 0 3px 0 -1px #d3aa9a, inset 0 -4px 0 -2px #4d494d, inset 4px 0 0 -2px #4d494d, inset -4px 0 0 -2px #4d494d;
 }
 

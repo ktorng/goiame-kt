@@ -6,6 +6,7 @@ import { Enemies } from './models/enemy.js';
 
 //import { test_prawn } from '../startup/server/fixtures.js';
 import { actions_list } from './models/lists.js';
+import { scenarios_list } from './models/lists.js';
 
 Meteor.methods({
   'generateNewGame'(accessCode) {
@@ -92,7 +93,7 @@ Meteor.methods({
     });
     Games.update(gameId, {$inc: {'count': 1}});
   },
-  
+
   // Generate enemies at beginning of game
   'generateEnemies'(gameId) {
     let count = Games.findOne(gameId).count
@@ -167,7 +168,7 @@ Meteor.methods({
     if (currentType == 'player') {
       Players.update(current._id, {
         $inc: {
-          'gameTime': time, 
+          'gameTime': time,
         },
         $set: {
           'isTurn': false,
@@ -176,7 +177,7 @@ Meteor.methods({
     } else {
       Enemies.update(current._id, {
         $inc: {
-          'gameTime': time, 
+          'gameTime': time,
         },
         $set: {
           'isTurn': false,
@@ -192,9 +193,5 @@ Meteor.methods({
       },
     });
   },
-
-  'dummy'(){
-    console.log('dummy method called');
-  }
 });
 

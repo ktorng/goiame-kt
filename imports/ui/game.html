@@ -2,7 +2,7 @@
   <div class="status-container">
     <div class="status-container-content">
       {{#if isStart }}
-        It is day 0! What do?  
+        It is Day 0! What do you do?
       {{/if}}
       <ul>
       {{#each log }}
@@ -14,24 +14,35 @@
 </template>
 
 <template name="gameStatus">
+  <div class="game-time">
+    Day: {{ gameTime }}
+  </div>
   <div class="game-status-container">
     <div class="status-container-content">
       <!--
       <h4><a class="nemesis-countdown {{#if arrived }}arrived{{/if}} {{#if game.paused }}paused{{/if}}">{{ timeRemaining }}</a></h4>
       -->
 
-      <div class="game-time">
-        Day: {{ gameTime }}
-      </div>      
-
       {{#if player.isTurn }}
-        <div class="player-status player-status-turn">It is your turn</div>
+        <div class="player-status player-status-turn warning">
+          It is your turn!
+        </div>
       {{else}}
-        <div class="player-status player-status-notturn">It is not your turn</div>
+        <div class="player-status player-status-notturn">
+          It is not your turn.
+        </div>
       {{/if}}
 
       <div class="current-location-name">
-        You are at: {{ player.location }}
+        Location: {{ player.location }}
+      </div>
+
+      <div id="spinner-container">
+        {{#if player.isTurn }}
+          <i class="fa fa-warning fa-2x faa-flash animated warning"></i>
+        {{else}}
+          <i class="fa fa-spinner fa-spin fa-2x fa-fw"></i>
+        {{/if}}
       </div>
     </div>
   </div>

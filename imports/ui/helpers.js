@@ -1,8 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 
-import { Games } from '../api/models/game.js'; 
-import { Players } from '../api/models/player.js'; 
-import { Enemies } from '../api/models/enemy.js'; 
+import { Games } from '../api/models/game.js';
+import { Players } from '../api/models/player.js';
+import { Enemies } from '../api/models/enemy.js';
 
 
 if (Meteor.isClient) {
@@ -14,7 +14,7 @@ if (Meteor.isClient) {
 generateAccessCode = function() {
   let code = "";
   const possible = "abcdefghijklmnopqrstuvwxyz";
-  
+
   for(let i=0; i<5; i++){
     code += possible.charAt(Math.floor(Math.random() * possible.length));
   }
@@ -93,11 +93,11 @@ calcDamage = function(current, baseDamage, type) {
   const spellStat = current.stats.intel/100;
   const randomFactor = 0.9 + 0.2 * Math.random();
   if (type == 'melee') {
-    return Math.round(baseDamage * meleeStat * randomFactor); 
+    return Math.round(baseDamage * meleeStat * randomFactor);
   } else if (type == 'ranged') {
-    return Math.round(baseDamage * rangedStat * randomFactor); 
+    return Math.round(baseDamage * rangedStat * randomFactor);
   } else if (type == 'spell') {
-    return Math.round(baseDamage * spellStat * randomFactor); 
+    return Math.round(baseDamage * spellStat * randomFactor);
   }
 }
 
@@ -107,14 +107,14 @@ calcDamage = function(current, baseDamage, type) {
 calcTimeReq = function(current, baseTime) {
   const spdStat = 100/current.stats.spd;
   const randomFactor = Math.random() - 0.5;
-  return Math.round(baseTime * spdStat + randomFactor); 
+  return Math.round(baseTime * spdStat + randomFactor);
 }
 
 // Calculate time to do action
 // for confirm attack window approx
 calcTimeReqNoRand = function(player, baseTime) {
   const spdStat = 100/player.stats.spd;
-  return Math.round(baseTime * spdStat); 
+  return Math.round(baseTime * spdStat);
 }
 
 // Returns an array that specifies whether action is a charge or cool
@@ -125,7 +125,7 @@ actionTimeReq = function(playerOrEnemy, actionName) {
   let timeReq;
 
   if (playerOrEnemy == 'player') {
-    current = getCurrentPlayer(); 
+    current = getCurrentPlayer();
   } else {
     current = getCurrentEnemy();
   }
@@ -139,20 +139,20 @@ actionTimeReq = function(playerOrEnemy, actionName) {
     coolOrCharge = 'charge';
     timeReq = calcTimeReqNoRand(current, action.timeCharge);
   }
-  
+
   return [coolOrCharge, timeReq];
 }
 
 moveHealthBar = function(enemy, percent) {
-  var elem = document.getElementById("health-bar " + enemy);   
+  var elem = document.getElementById("health-bar " + enemy);
   var width = 10;
   var id = setInterval(frame, 10);
   function frame() {
     if (width >= 100) {
       clearInterval(id);
     } else {
-      width++; 
-      elem.style.width = width + '%'; 
+      width++;
+      elem.style.width = width + '%';
 //      document.getElementById("label").innerHTML = width * 1  + '%';
     }
   }

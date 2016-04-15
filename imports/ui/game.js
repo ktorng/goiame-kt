@@ -2,8 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { BlazeLayout } from 'meteor/kadira:blaze-layout';
 
-import { Games } from '../api/models/game.js'; 
-import { Players } from '../api/models/player.js'; 
+import { Games } from '../api/models/game.js';
+import { Players } from '../api/models/player.js';
 import { Enemies } from '../api/models/enemy.js';
 
 import './game.html';
@@ -43,7 +43,7 @@ Template.gameView.onRendered(function() {
 Template.gameView.helpers({
   isStart() {
     const game = getCurrentGame();
-    return game.log.length == 0; 
+    return game.log.length == 0;
   },
   game: function() {
     return getCurrentGame();
@@ -128,7 +128,7 @@ Template.character.helpers({
   },
   players() {
     var game = getCurrentGame();
-    return Players.find({'gameId': game._id}); 
+    return Players.find({'gameId': game._id});
   },
 });
 
@@ -142,7 +142,7 @@ Template.targets.helpers({
   enemies() {
     const game = getCurrentGame();
     const player = getCurrentPlayer();
-    return Enemies.find({'gameId': game._id, 'location': player.location}); 
+    return Enemies.find({'gameId': game._id, 'location': player.location});
   },
   healthPercent() {
     const target = Enemies.findOne(this._id);
@@ -164,10 +164,10 @@ Template.targets.helpers({
     return this._id === Session.get('inspectedEnemy');
   },
   playerTimeReq() {
-    return actionTimeReq('player', Session.get('selectedAction'))[1];  
+    return actionTimeReq('player', Session.get('selectedAction'))[1];
   },
   coolOrCharge() {
-    return actionTimeReq('player', Session.get('selectedAction'))[0];  
+    return actionTimeReq('player', Session.get('selectedAction'))[0];
   },
 });
 
@@ -188,7 +188,7 @@ Template.targets.events({
     let game = getCurrentGame();
     let player = getCurrentPlayer();
     let target = this;
-    const attack = getActionByName(player.actions, 'attack'); 
+    const attack = getActionByName(player.actions, 'attack');
     const attackTime = calcTimeReq(player, attack.timeCool);
     const attackDamage = calcDamage(player, attack.damage, attack.type);
     const log = 'Day ' + Math.round(player.gameTime) + ': ' + player.name + ' attacked '
