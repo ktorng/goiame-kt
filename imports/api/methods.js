@@ -108,9 +108,11 @@ Meteor.methods({
       'isNemesis': true,
       'actions': nemesisActions,
       'stats': {
-        'str': Math.round(50 + 100 * Math.random()),
-        'dex': Math.round(50 + 100 * Math.random()),
-        'intel': Math.round(50 + 100 * Math.random()),
+        'currentHealth': 200,
+        'maxHealth': 200,
+        'str': Math.round(100 + 100 * Math.random()),
+        'dex': Math.round(100 + 100 * Math.random()),
+        'intel': Math.round(100 + 100 * Math.random()),
         'acc': Math.round(60 + 20 * Math.random()),
         'spd': Math.round(80 + 40 * Math.random()),
       },
@@ -120,7 +122,7 @@ Meteor.methods({
       gameId, {
       $push: {
         'queue': {
-          $each: [ { 'id': nemesisId, 'entity': 'enemy', 'time': 50 } ],
+          $each: [ { 'id': nemesisId, 'entity': 'enemy', 'time': 10 } ],
           $sort: { 'time': 1 },
         },
       },
