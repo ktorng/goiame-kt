@@ -11,31 +11,31 @@ import './helpers.js';
 import '../api/methods.js';
 
 trackGameState = function() {
-  let game = getCurrentGame();
-  let nextPlayer = _.min(Players.find().fetch(), function(player) {
-    return player.gameTime;
-  });
-  let nextEnemy = _.min(Enemies.find().fetch(), function(enemy) {
-    return enemy.gameTime;
-  });
-  let minTime = Math.min(nextPlayer.gameTime, nextEnemy.gameTime);
+//  let game = getCurrentGame();
+//  let nextPlayer = _.min(Players.find().fetch(), function(player) {
+//    return player.gameTime;
+//  });
+//  let nextEnemy = _.min(Enemies.find().fetch(), function(enemy) {
+//    return enemy.gameTime;
+//  });
+//  let minTime = Math.min(nextPlayer.gameTime, nextEnemy.gameTime);
+//
+//
+//
+//  if (minTime) {
+//    if (game.gameTime < minTime) {
+//      if (nextPlayer.gameTime < nextEnemy.gameTime) {
+//        Meteor.call('setTurn', 'player', nextPlayer._id);
+//      } else {
+//        Meteor.call('setTurn', 'enemy', nextEnemy._id);
+//      }
+//      Meteor.call('setGameTime', game._id, minTime);
+//    }
+//  }
 
-
-
-  if (minTime) {
-    if (game.gameTime < minTime) {
-      if (nextPlayer.gameTime < nextEnemy.gameTime) {
-        Meteor.call('setTurn', 'player', nextPlayer._id);
-      } else {
-        Meteor.call('setTurn', 'enemy', nextEnemy._id);
-      }
-      Meteor.call('setGameTime', game._id, minTime);
-    }
-  }
 }
 
-Template.gameView.onRendered(function() {
-  Tracker.autorun(trackGameState);
+Template.gameView.onCreated(function() {
   var game = getCurrentGame();
   var player = getCurrentPlayer();
 });
@@ -136,6 +136,9 @@ Template.targets.helpers({
   game() {
     return getCurrentGame();
   },
+  player() {
+    return getCurrentPlayer();
+  },
   enemy() {
     return Enemies.findOne(this._id);
   },
@@ -191,11 +194,13 @@ Template.targets.events({
     const attack = getActionByName(player.actions, 'attack');
     const attackTime = calcTimeReq(player, attack.timeCool);
     const attackDamage = calcDamage(player, attack.damage, attack.type);
-    const log = 'Day ' + Math.round(player.gameTime) + ': ' + player.name + ' attacked '
+    const log = 'Day ' + Math.round(game.gameTime) + ': ' + player.name + ' attacked '
       + target.name + ' for ' + attackDamage + ' damage!';
 
     Meteor.call('pushToLog', game, log);
     Meteor.call('damageTarget', 'player', target, attackDamage);
-    Meteor.call('endTurn', 'player', player, attackTime);
+    Meteor.call('endTurn', game._id, 'player', player._id, attackTime, function() {
+      Meteor.call('setGameTime', game._id);
+    });
   },
 });

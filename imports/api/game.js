@@ -21,7 +21,7 @@ if (Meteor.isServer) {
 Enemies.find( { "stats.currentHealth": { $lte: 0 } } ).observe({
   added: function(enemy) {
     Meteor.call('pushToLog', Games.findOne(enemy.gameId), enemy.name + ' was defeated!'); 
-    Meteor.call('removeEnemy', enemy._id);
+    Meteor.call('removeEnemy', enemy.gameId, enemy._id);
   }
 });
 
@@ -43,12 +43,14 @@ Enemies.find( { "isTurn": true } ).observe({
       let game = Games.findOne(enemy.gameId);
       const attackTime = calcTimeReq(enemy, chosenAction.timeCool);
       const attackDamage = calcDamage(enemy, chosenAction.damage, chosenAction.type);
-      const log = 'Day ' + Math.round(enemy.gameTime) + ': ' + enemy.name + ' attacked '
+      const log = 'Day ' + Math.round(game.gameTime) + ': ' + enemy.name + ' attacked '
         + chosenTarget.name + ' for ' + attackDamage + ' damage!';
 
       Meteor.call('pushToLog', game, log);
       Meteor.call('damageTarget', 'enemy', chosenTarget, attackDamage);
-      Meteor.call('endTurn', 'enemy', enemy, attackTime);
+      Meteor.call('endTurn', game._id, 'enemy', enemy._id, attackTime, function() {
+        Meteor.call('setGameTime', game._id);
+      });
 
     } else {
       availableActions = enemy.actions.filter(function(a) {

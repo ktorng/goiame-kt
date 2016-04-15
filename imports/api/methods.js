@@ -19,21 +19,46 @@ Meteor.methods({
     return gameId;
   },
   'generateNewPlayer'(gameId, name) {
-    let count = Games.findOne(gameId).count
     const playerId = Players.insert({
       gameId: gameId,
       name: name,
-      gameTime: count / 1000,
+      gameTime: 0,
     });
-    Games.update(gameId, {$inc: {'count': 1}});
+    // Add player to turn queue upon creation
+    Games.update(
+      gameId, {
+      $push: {
+        'queue': {
+          'id': playerId,
+          'entity': 'player',
+          'time': 0,
+        },
+      },
+    });
 
     return playerId;
   },
   'removePlayer'(playerId) {
     Players.remove(playerId);
   },
-  'removeEnemy'(enemyId) {
+  'removeEnemy'(gameId, enemyId) {
+    // Remove from Enemies collection
     Enemies.remove(enemyId);
+
+    const enemyNextInQueue = Games.findOne(gameId).queue[0];
+    const enemyInQueue = Games.findOne(gameId).queue.filter(function(e) {
+      return e.id == enemyId;
+    })[0];
+
+    // Remove from queue
+    Games.update(gameId, {
+      $pull: { queue: { id: enemyId, entity: 'enemy', time: enemyInQueue.time } }
+    });
+
+    // If this enemy would have been next in queue, call nextTurn method
+    if (enemyInQueue.id == enemyNextInQueue.id) {
+      Meteor.call('nextTurn', gameId);
+    }
   },
   'changeGameState'(gameId, state) {
     Games.update(gameId, {$set: {'state': state}});
@@ -67,20 +92,20 @@ Meteor.methods({
 
     Meteor.call('generateNemesis', gameId);
     Meteor.call('generateEnemies', gameId);
+    Meteor.call('nextTurn', gameId);
   },
 
   // Generate enemy Nemesis
   'generateNemesis'(gameId) {
-    let count = Games.findOne(gameId).count
     const nemesisActions = actions_list.filter(function(action) {
       return action.isNemesis == true;
     });
 
-    Enemies.insert({
-      gameId: gameId,
-      name: 'Nemesis-BIGUBOSU',
+    const nemesisId = Enemies.insert({
+      'gameId': gameId,
+      'name': 'Nemesis-BIGUBOSU',
       'location': 'Headquarters',
-      'gameTime': count / 1000,
+      'gameTime': 50,
       'isNemesis': true,
       'actions': nemesisActions,
       'stats': {
@@ -91,23 +116,31 @@ Meteor.methods({
         'spd': Math.round(80 + 40 * Math.random()),
       },
     });
-    Games.update(gameId, {$inc: {'count': 1}});
+    // Add nemesis to turn queue upon creation
+    Games.update(
+      gameId, {
+      $push: {
+        'queue': {
+          $each: [ { 'id': nemesisId, 'entity': 'enemy', 'time': 50 } ],
+          $sort: { 'time': 1 },
+        },
+      },
+    });
   },
 
   // Generate enemies at beginning of game
   'generateEnemies'(gameId) {
-    let count = Games.findOne(gameId).count
     const starterActions = actions_list.filter(function(action) {
       return action.isStarter == true;
     });
     const playerCount = Players.find({gameId: gameId}).count();
 
     for (let i = 0; i < playerCount; i++) {
-      Enemies.insert({
-        gameId: gameId,
-        name: 'Slime-' + i,
+      let enemyId = Enemies.insert({
+        'gameId': gameId,
+        'name': 'Slime-' + i,
         'location': 'Headquarters',
-        'gameTime': count / 1000,
+        'gameTime': 10,
         'isNemesis': false,
         'actions': starterActions,
         'stats': {
@@ -120,7 +153,16 @@ Meteor.methods({
           'spd': Math.round(50 + 20 * Math.random()),
         },
       });
-    Games.update(gameId, {$inc: {'count': 1}});
+      // Add enemy to turn queue upon creation
+      Games.update(
+        gameId, {
+        $push: {
+          'queue': {
+            $each: [ { 'id': enemyId, 'entity': 'enemy', 'time': 10 } ],
+            $sort: { 'time': 1 },
+          },
+        },
+      });
     }
   },
 
@@ -140,16 +182,17 @@ Meteor.methods({
     }
   },
 
-  'setGameTime'(gameId, time) {
+  'setGameTime'(gameId) {
+    let minTime = Games.findOne(gameId).queue[0].time;
     Games.update(gameId, {
       $set: {
-        'gameTime': time,
-      }
+        'gameTime': minTime,
+      },
     });
   },
 
-  'setTurn'(currentType, id) {
-    if (currentType == 'player') {
+  'setTurn'(entity, id) {
+    if (entity == 'player') {
       Players.update(id, {
         $set: {
           'isTurn': true,
@@ -164,25 +207,38 @@ Meteor.methods({
     }
   },
 
-  'endTurn'(currentType, current, time) {
-    if (currentType == 'player') {
-      Players.update(current._id, {
-        $inc: {
-          'gameTime': time,
-        },
-        $set: {
-          'isTurn': false,
+  'endTurn'(gameId, entity, entityId, time) {
+    let minTime = Games.findOne(gameId).queue[0].time;
+    let newTime = minTime + time;
+    try {
+      if (entity == 'player') {
+        Players.update(entityId, {
+          $set: {
+            'isTurn': false
+          },
+        });
+      } else {
+        Enemies.update(entityId, {
+          $set: {
+            'isTurn': false
+          },
+        });
+      }
+      Games.update(gameId, {
+        $pop: {
+          'queue': -1
         },
       });
-    } else {
-      Enemies.update(current._id, {
-        $inc: {
-          'gameTime': time,
-        },
-        $set: {
-          'isTurn': false,
+      Games.update(gameId, {
+        $push: {
+          'queue': {
+            $each: [ { id: entityId, entity: entity, time: newTime } ],
+            $sort: { time: 1 },
+          },
         },
       });
+      Meteor.call('nextTurn', gameId);
+    } catch(e) {
     }
   },
 
@@ -193,5 +249,18 @@ Meteor.methods({
       },
     });
   },
+
+  'nextTurn'(gameId) {
+    nextTurn =  Games.findOne(gameId).queue[0];
+    if (nextTurn.entity == 'player') {
+      Meteor.call('setTurn', 'player', nextTurn.id);
+    } else {
+      Meteor.call('setTurn', 'enemy', nextTurn.id);
+    }
+  },
+
+  'dummy'(){
+    console.log('dummy method called');
+  }
 });
 
