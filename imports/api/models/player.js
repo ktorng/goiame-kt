@@ -41,7 +41,7 @@ Players.attachSchema(new SimpleSchema({
   },
   isTurn: {
     type: Boolean,
-    defaultValue: true,
+    defaultValue: false,
   },
   location: {
     type: String,

@@ -28,4 +28,13 @@ Games.attachSchema(new SimpleSchema({
     type: Number,
     defaultValue: 1,
   },
+  'queue.$.id': {
+    type: String,
+  },
+  'queue.$.entity': {
+    type: String,
+  },
+  'queue.$.time': {
+    type: Number,
+  },
 }));

@@ -92,9 +92,12 @@
                 SPD: {{ enemy.stats.spd }}<br>
               {{/if}}
               <button class="btn-inspect">inspect</button>
-              <button class="btn-attack" href="#" data-toggle="modal">
-                attack
-              </button>
+              <!-- only show attack options on turn -->
+              {{#if player.isTurn}}
+                <button class="btn-attack" href="#" data-toggle="modal">
+                  attack
+                </button>
+              {{/if}}
 
               <div class="modal" id="attack-modal">
                 <div class="modal-content">
