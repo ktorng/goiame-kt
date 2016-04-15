@@ -42,7 +42,7 @@ var locations_list = [
   {
     name: 'Hospital',
   },
-]
+];
 
 Meteor.startup(function() {
   // Delete all games and players at startup

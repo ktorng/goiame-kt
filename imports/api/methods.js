@@ -6,6 +6,7 @@ import { Enemies } from './models/enemy.js';
 
 //import { test_prawn } from '../startup/server/fixtures.js';
 import { actions_list } from './models/lists.js';
+import { scenarios_list } from './models/lists.js';
 
 Meteor.methods({
   'generateNewGame'(accessCode) {
@@ -128,7 +129,7 @@ Meteor.methods({
       },
     });
   },
-  
+
   // Generate enemies at beginning of game
   'generateEnemies'(gameId) {
     const starterActions = actions_list.filter(function(action) {
@@ -184,7 +185,7 @@ Meteor.methods({
   },
 
   'setGameTime'(gameId) {
-    let minTime = Games.findOne(gameId).queue[0].time; 
+    let minTime = Games.findOne(gameId).queue[0].time;
     Games.update(gameId, {
       $set: {
         'gameTime': minTime,
@@ -209,7 +210,7 @@ Meteor.methods({
   },
 
   'endTurn'(gameId, entity, entityId, time) {
-    let minTime = Games.findOne(gameId).queue[0].time; 
+    let minTime = Games.findOne(gameId).queue[0].time;
     let newTime = minTime + time;
     try {
       if (entity == 'player') {

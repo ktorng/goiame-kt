@@ -74,3 +74,22 @@ export const locations_list = [
     name: 'Hospital',
   },
 ]
+
+export const scenarios_list = [
+  {
+    name: 'Scenario A',
+    description: 'Description A...'
+  },
+  {
+    name: 'Scenario B',
+    description: 'Description B...'
+  },
+  {
+    name: 'Scenario C',
+    description: 'Description C...'
+  },
+  {
+    name: 'Scenario C',
+    description: 'Description C...'
+  }
+]
