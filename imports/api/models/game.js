@@ -37,4 +37,16 @@ Games.attachSchema(new SimpleSchema({
   'queue.$.time': {
     type: Number,
   },
+  'queue.$.status': {
+    type: String,
+    optional: true,
+  },
+  'queue.$.action': {
+    type: String,
+    optional: true,
+  },
+  'queue.$.target': {
+    type: [String],
+    optional: true,
+  },
 }));

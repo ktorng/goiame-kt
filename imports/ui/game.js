@@ -92,11 +92,14 @@ Template.gameButtons.events({
       footer: "gameButtons",
     });
   },
+  'click .btn-location': function () {
+    player = getCurrentPlayer();
+    console.log($('#player-health-bar-' + player._id));
+  },
   'click .btn-inventory': function () {
    console.log(Games.findOne());
    console.log(Players.findOne());
    console.log(Enemies.find().fetch());
-   console.log(findMinGameTime(Session.get('gameId')));
   },
   'click .btn-game-menu': function () {
     BlazeLayout.render("main", { content: "gameMenu" });

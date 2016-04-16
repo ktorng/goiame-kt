@@ -39,6 +39,10 @@ Players.attachSchema(new SimpleSchema({
     type: String,
     optional: true,
   },
+  status: {
+    type: String,
+    defaultValue: 'waiting',
+  },
   isTurn: {
     type: Boolean,
     defaultValue: false,

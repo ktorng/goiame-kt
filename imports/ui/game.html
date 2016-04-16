@@ -14,11 +14,16 @@
 </template>
 
 <template name="gameStatus">
-  <div class="game-time">
-    Day: {{ gameTime }}
-  </div>
   <div class="game-status-container">
     <div class="status-container-content">
+      <div class="game-time">
+        Day: {{ gameTime }}
+      </div>
+      <div class="progress">
+        <div id="player-health-bar-{{ player._id }}" class="progress-bar" data-values="80">
+          <strong>HP: {{ player.stats.currentHealth }}/{{ player.stats.maxHealth }}</strong>
+        </div>
+      </div>
       <!--
       <h4><a class="nemesis-countdown {{#if arrived }}arrived{{/if}} {{#if game.paused }}paused{{/if}}">{{ timeRemaining }}</a></h4>
       -->
